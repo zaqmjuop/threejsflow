@@ -1,9 +1,11 @@
 import * as THREE from 'three'
 import Beijing from '@/views/Beijing'
+import { getCanvasSize } from './common/getCanvasSize'
+
 export default () => {
   const renderer = new THREE.WebGLRenderer()
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  const beijing = Beijing()
+
+  const beijing = Beijing({ container: renderer.domElement })
   renderer.render(beijing.scene, beijing.camera)
 
   const animate = () => {
@@ -11,9 +13,23 @@ export default () => {
     renderer.render(beijing.scene, beijing.camera)
   }
 
+  const resize = () => {
+    const canvasSize = getCanvasSize()
+    renderer.setSize(canvasSize.width, canvasSize.height)
+  }
+
+  const handleResize = () => {
+    resize()
+  }
+
   const setup = () => {
     animate()
   }
 
-  return { renderer, animate, setup }
+  const mounted = () => {
+    resize()
+    window.addEventListener('resize', handleResize)
+  }
+
+  return { renderer, animate, setup, resize, mounted }
 }

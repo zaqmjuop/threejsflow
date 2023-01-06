@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 export default () => {
-  const geometry = new THREE.BoxGeometry(1, 1, 1)
+  const geometry = new THREE.BoxGeometry(10, 10, 10)
 
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
   const cube = new THREE.Mesh(geometry, material)
@@ -12,7 +12,7 @@ export default () => {
   }
 
   const setup = () => {
-    animate()
+    // animate()
   }
 
   return { mesh: cube, setup }
