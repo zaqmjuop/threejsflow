@@ -10,11 +10,11 @@ export default defineConfig({
   server: {
     port: 3000,
     watch: {
-      ignored: ['!**/node_modules/@zaqmjuop/libgif/dist/libgif.mjs']
+      ignored: ['!**/node_modules/@zaqmjuop/threejsflow/dist/threejsflow.mjs']
     }
   },
   optimizeDeps: {
-    exclude: ['@zaqmjuop/libgif']
+    exclude: ['@zaqmjuop/threejsflow']
   },
   plugins: [],
   build: {
@@ -22,14 +22,14 @@ export default defineConfig({
     lib:
       buildType === 'lib'
         ? {
-            entry: path.resolve(__dirname, 'lib/libgif.ts'),
-            name: 'libgif',
+            entry: path.resolve(__dirname, 'lib/threejsflow.ts'),
+            name: 'threejsflow',
             formats: ['es'],
-            fileName: 'libgif'
+            fileName: 'threejsflow'
           }
         : void 0
   },
-  base: 'libgif', // git-page 基础路径
+  base: 'threejsflow', // git-page 基础路径
   preview: {
     port: 8080
   }
