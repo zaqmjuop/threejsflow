@@ -11,6 +11,13 @@ export default (props: {
     1000
   )
 
+  const rarateStepDeg = Math.PI / 36
+
+  const reset = () => {
+    camera.position.set(50, 50, 150) //设置相机位置
+    camera.rotation.set(0, 0, 0)
+  }
+
   const xmove = (changeVar: number) => {
     camera.position.setX(camera.position.x + changeVar)
   }
@@ -39,22 +46,25 @@ export default (props: {
           xmove(1) // 向右移动
           break
         case 'h':
-          // 左旋转
+          camera.rotateY(rarateStepDeg) // 左旋转
           break
         case ';':
-          // 右旋转
+          camera.rotateY(-rarateStepDeg) // 右旋转
           break
         case 'u':
           ymove(1) // 向上移动// 向上移动
           break
-        case 'n':
+        case 'm':
           ymove(-1) // 向下移动
           break
         case 'o':
-          // 向上旋转
+          camera.rotateX(0.1) // 向上旋转
           break
-        case 'm':
-          // 向下旋转
+        case '.':
+          camera.rotateX(-0.1) // 向下旋转
+          break
+        case ',':
+          reset() // 复位
           break
         default:
           break
@@ -63,7 +73,7 @@ export default (props: {
   }
 
   const setup = () => {
-    camera.position.set(50, 50, 150) //设置相机位置
+    reset()
     document.body.addEventListener('keydown', handleKeyup)
   }
 
