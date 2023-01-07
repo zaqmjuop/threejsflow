@@ -12,7 +12,8 @@ export default (props: {
     1000
   )
 
-  const rarateStepDeg = Math.PI / 36
+  const rorateStepDeg = getDegVal(5)
+  const mouseRorateStep = getDegVal(0.1)
 
   const reset = () => {
     camera.position.set(50, 180, 400) //设置相机位置
@@ -47,10 +48,10 @@ export default (props: {
           xmove(1) // 向右移动
           break
         case 'h':
-          camera.rotateY(rarateStepDeg) // 左旋转
+          camera.rotateY(rorateStepDeg) // 左旋转
           break
         case ';':
-          camera.rotateY(-rarateStepDeg) // 右旋转
+          camera.rotateY(-rorateStepDeg) // 右旋转
           break
         case 'u':
           ymove(1) // 向上移动// 向上移动
@@ -73,10 +74,47 @@ export default (props: {
     }
   }
 
+  const handleMouseDown = (event: MouseEvent) => {
+    props.container.addEventListener('mousemove', handleMouseMove)
+    props.container.addEventListener('mouseup', handleMouseUp)
+  }
+  const uninstHandleMouse = () => {
+    props.container.removeEventListener('mousemove', handleMouseMove)
+    props.container.removeEventListener('mouseup', handleMouseUp)
+  }
+  const handleMouseMove = (event: MouseEvent) => {
+    if (event.buttons === 0) {
+      return uninstHandleMouse()
+    }
+    if (event.movementX) {
+      const dirX = event.movementX > 0 ? 1 : -1
+      camera.rotateY(-dirX * mouseRorateStep) // x旋转
+    }
+    if (event.movementY) {
+      const dirY = event.movementY > 0 ? 1 : -1
+      camera.rotateX(-dirY * mouseRorateStep) // x旋转
+    }
+  }
+  const handleMouseUp = (event: MouseEvent) => {
+    uninstHandleMouse()
+  }
+
+  const handleWheel = (event: WheelEvent) => {
+    if (!event.deltaY) {
+      return
+    }
+    const dir = event.deltaY > 0 ? 1 : -1
+    zmove(dir * 4)
+  }
+
   const setup = () => {
     reset()
     document.body.addEventListener('keydown', handleKeyup)
+    props.container.addEventListener('mousedown', handleMouseDown)
+    props.container.addEventListener('wheel', handleWheel)
   }
 
   return { camera, setup }
 }
+// TODO
+// 位置移动时应该考虑当前朝向
