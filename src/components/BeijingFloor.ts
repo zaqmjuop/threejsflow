@@ -1,19 +1,19 @@
 import * as THREE from 'three'
 export default () => {
-  const geometry = new THREE.PlaneGeometry( 1, 1 );
+  const geometry = new THREE.PlaneGeometry(400, 400)
 
-  const material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xdddddd,
+    side: THREE.DoubleSide
+  })
   const floor = new THREE.Mesh(geometry, material)
 
-  const animate = () => {
-    requestAnimationFrame(animate)
-    floor.rotation.x += 0.01
-    floor.rotation.y += 0.01
+  const setup = () => {
+    floor.position.set(0, 0, 0)
+    floor.rotation.set(Math.PI / 2, 0, 0)
   }
 
-  const setup = () => {
-    animate()
-  }
+  console.log(floor)
 
   return { mesh: floor, setup }
 }

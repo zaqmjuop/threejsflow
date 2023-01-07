@@ -13,6 +13,7 @@ export default () => {
 
   const setup = () => {
     // animate()
+    cube.position.set(20, 0,0 )
   }
 
   return { mesh: cube, setup }

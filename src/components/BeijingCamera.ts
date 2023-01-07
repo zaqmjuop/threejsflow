@@ -1,3 +1,4 @@
+import { getDegVal } from '@/common/getDegVal'
 import * as THREE from 'three'
 export default (props: {
   width: number
@@ -14,8 +15,8 @@ export default (props: {
   const rarateStepDeg = Math.PI / 36
 
   const reset = () => {
-    camera.position.set(50, 50, 150) //设置相机位置
-    camera.rotation.set(0, 0, 0)
+    camera.position.set(50, 180, 400) //设置相机位置
+    camera.rotation.set(-getDegVal(20), getDegVal(15), 0)
   }
 
   const xmove = (changeVar: number) => {
