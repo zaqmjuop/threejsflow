@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 export default () => {
-  const geometry = new THREE.PlaneGeometry(400, 400)
+  const geometry = new THREE.PlaneGeometry(2000, 800)
 
   const material = new THREE.MeshBasicMaterial({
     color: 0xdddddd,

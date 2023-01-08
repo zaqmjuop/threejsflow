@@ -7,10 +7,11 @@ interface Props {
 
 export default (props: Props) => {
   const vnodes = props.stationList.map((itemData) => {
-    const geometry = new THREE.CapsuleGeometry(5, 10, 4, 8)
+    const geometry = new THREE.CapsuleGeometry(5, 10, 16, 32)
     const material = new THREE.MeshPhongMaterial({
       color: 0x156289,
       emissive: 0x072534,
+      opacity: 0.7,
       side: THREE.DoubleSide,
       flatShading: true
     })

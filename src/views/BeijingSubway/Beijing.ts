@@ -18,6 +18,11 @@ export default (props: { container: HTMLElement }) => {
   })
   beijingCamera.setup()
 
+  const point = new THREE.PointLight(0xffffff);
+  //设置点光源位置，改变光源的位置
+  point.position.set(0, 0, 300);
+  scene.add(point);
+
   const cube = MyCube()
   scene.add(cube.mesh)
   cube.setup()
