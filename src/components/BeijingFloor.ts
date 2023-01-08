@@ -13,7 +13,5 @@ export default () => {
     floor.rotation.set(Math.PI / 2, 0, 0)
   }
 
-  console.log(floor)
-
   return { mesh: floor, setup }
 }

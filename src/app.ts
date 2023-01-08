@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import Beijing from '@/views/Beijing'
+import Beijing from '@/views/BeijingSubway/Beijing'
 import { getCanvasSize } from './common/getCanvasSize'
 
 export default () => {
