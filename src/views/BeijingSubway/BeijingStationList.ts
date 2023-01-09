@@ -33,7 +33,7 @@ export default (props: Props) => {
     const stationGeometry = new TextGeometry(itemData.stationName, {
       font,
       size: 5, // 大小
-      height: 0 // 是否是立体的文字，如果是2d的显示就设置0mmmmmmmmmmmmmmmmmmm
+      height: 0
     })
 
     const textMaterial = new THREE.MeshBasicMaterial({
