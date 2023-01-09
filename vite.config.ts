@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import path from 'path'
 
-let buildType = 'lib'
+let buildType = 'docs'
 
 export default defineConfig({
   plugins: [vue(), vueJsx()],
