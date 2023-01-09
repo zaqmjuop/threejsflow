@@ -74,7 +74,7 @@ export default (props: {
     }
   }
 
-  const handleMouseDown = (event: MouseEvent) => {
+  const handleMouseDown = () => {
     props.container.addEventListener('mousemove', handleMouseMove)
     props.container.addEventListener('mouseup', handleMouseUp)
   }
@@ -95,7 +95,7 @@ export default (props: {
       camera.rotateX(-dirY * mouseRorateStep) // x旋转
     }
   }
-  const handleMouseUp = (event: MouseEvent) => {
+  const handleMouseUp = () => {
     uninstHandleMouse()
   }
 
