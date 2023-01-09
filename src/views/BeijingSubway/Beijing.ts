@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import BeijingCamera from '@/components/BeijingCamera'
-import MyCube from '@/components/MyCube'
 import BeijingFloor from '@/components//BeijingFloor'
 import { getCanvasSize } from '@/common/getCanvasSize'
 import BeijingStationList from '@/views/BeijingSubway/BeijingStationList'
@@ -18,17 +17,13 @@ export default (props: { container: HTMLElement }) => {
   })
   beijingCamera.setup()
 
-  const point = new THREE.PointLight(0xffffff);
+  const point = new THREE.PointLight(0xffffff)
   //设置点光源位置，改变光源的位置
-  point.position.set(0, 0, 300);
-  scene.add(point);
-
-  const cube = MyCube()
-  scene.add(cube.mesh)
-  cube.setup()
+  point.position.set(0, 0, 300)
+  scene.add(point)
   const stationList = BeijingStationList({ stationList: BEIJING_STATION_DATA })
 
-  stationList.vnodes.forEach((stationVnode) => scene.add(stationVnode.mesh))
+  stationList.vnodes.forEach((stationVnode) => scene.add(stationVnode.group))
   stationList.setup()
 
   const floor = BeijingFloor()
