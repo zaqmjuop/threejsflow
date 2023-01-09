@@ -12,7 +12,7 @@ const loader = new FontLoader()
 const font = loader.parse(YaHei_Regular)
 
 export default (props: Props) => {
-  const vnodes = props.stationList.map((itemData) => {
+  const vnodes = props.stationList.map((itemData, itemIndex) => {
     const group = new THREE.Group()
     const geometry = new THREE.CapsuleGeometry(5, 10, 16, 32)
     const material = new THREE.MeshPhongMaterial({
@@ -52,6 +52,27 @@ export default (props: Props) => {
     )
 
     group.add(stationLabel)
+
+    if (itemIndex) {
+      const prevItem = props.stationList[itemIndex - 1]
+      const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(
+          prevItem.position.x,
+          prevItem.position.y,
+          prevItem.position.z
+        ),
+        new THREE.Vector3(
+          itemData.position.x,
+          itemData.position.y,
+          itemData.position.z
+        )
+      ])
+      // const path = new CustomSinCurve(10)
+      const lineGeometry = new THREE.TubeGeometry(curve, 10, 2, 4, false)
+      const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x30b030 })
+      const lineMesh = new THREE.Mesh(lineGeometry, lineMaterial)
+      group.add(lineMesh)
+    }
 
     return { group }
   })
