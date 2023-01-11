@@ -10,7 +10,7 @@ const routes = [
   { path: '/example', component: Example },
   {
     path: '/beijing-subway',
-    component: () => import('@/pages/BeijingSubway.vue')
+    component: () => import('@/pages/BeijingSubway/BeijingSubway.vue')
   }
 ]
 
