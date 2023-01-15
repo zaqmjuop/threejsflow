@@ -5,7 +5,7 @@
     :orbit-ctrl="{ enableDamping: true }"
     resize="window"
   >
-    <Camera :position="{ x: 1000, y: 600, z: 500 }" />
+    <Camera :position="{ x: 0, y: 30, z: 130 }" />
     <Scene>
       <PointLight :position="{ z: 300 }" />
       <BeijingRegion />
