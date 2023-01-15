@@ -34,7 +34,7 @@
         }"
       >
         <BasicMaterial
-          color="#156289"
+          color="red"
           :props="{
             wireframe: false,
             transparent: true,
@@ -47,9 +47,9 @@
   </Group>
 </template>
 <script setup lang="ts">
-import { BasicMaterial, PhongMaterial, Group, Text, Cylinder } from 'troisjs'
+import { BasicMaterial, PhongMaterial, Group, Cylinder } from 'troisjs'
 import { Station } from '@/type/BeijingSubway'
-import { getCurrentInstance, PropType, provide } from 'vue'
+import { PropType } from 'vue'
 import Text2 from '@/components/Text2'
 
 import YaHei_Regular from '@/assets/Microsoft-YaHei-Regular.json'
@@ -59,8 +59,4 @@ defineProps({
     type: Array as PropType<Array<Station>>
   }
 })
-
-const vm = getCurrentInstance()
-
-provide(/* key */ Symbol('Mesh'), /* value */ vm)
 </script>

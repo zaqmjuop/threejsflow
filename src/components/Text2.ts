@@ -1,8 +1,9 @@
 import { defineComponent, PropType, watch } from 'vue'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
-import Mesh, { MeshSetupInterface } from 'troisjs/src/meshes/Mesh'
-console.log(Mesh)
+import { MeshSetupInterface } from 'troisjs/src/meshes/Mesh'
+import { Mesh, MeshInjectionKey } from 'troisjs'
+
 interface TextSetupInterface extends MeshSetupInterface {
   geometry?: TextGeometry
   font?: Font
@@ -37,7 +38,6 @@ export default defineComponent({
     return {}
   },
   created() {
-    console.log(1, this)
     if (!this.fontSrc) {
       console.error('Missing required prop: "font-src"')
       return

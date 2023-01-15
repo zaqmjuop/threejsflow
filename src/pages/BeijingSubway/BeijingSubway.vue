@@ -15,16 +15,7 @@
 </template>
 <script setup lang="ts">
 import { BEIJING_STATION_DATA } from '@/constant/BeijingStationData'
-import {
-  Box,
-  Camera,
-  LambertMaterial,
-  MeshPublicInterface,
-  PointLight,
-  Renderer,
-  RendererPublicInterface,
-  Scene
-} from 'troisjs'
+import { Camera, PointLight, Renderer, Scene } from 'troisjs'
 import StationList from './StationList.vue'
 import BeijingRegion from './BeijingRegion.vue'
 </script>
