@@ -1,6 +1,6 @@
 <template>
   <Group>
-    <Group v-for="(item, index) in stationList?.slice(13, 14)">
+    <Group v-for="(item, index) in stationList">
       <Cylinder
         :position="{
           x: item.position.x,
@@ -43,20 +43,41 @@
           }"
         />
       </Text2>
+      <Tube
+        v-if="index > 0"
+        :path="getLineCurve(stationList[index - 1].position, item.position)"
+        :tubularSegments="10"
+        :radius="2"
+        :radialSegments="4"
+        :closed="false"
+      >
+        <BasicMaterial color="#30b030" />
+      </Tube>
     </Group>
   </Group>
 </template>
 <script setup lang="ts">
-import { BasicMaterial, PhongMaterial, Group, Cylinder } from 'troisjs'
-import { Station } from '@/type/BeijingSubway'
+import { BasicMaterial, PhongMaterial, Group, Cylinder, Tube } from 'troisjs'
+import { StationPosition, Station } from '@/type/BeijingSubway'
 import { PropType } from 'vue'
-import Text2 from '@/components/Text2'
-
+import Text2 from '@/components/Text'
 import YaHei_Regular from '@/assets/Microsoft-YaHei-Regular.json'
+import { Vector3, CatmullRomCurve3 } from 'three'
+
+const getLineCurve = (
+  position1: StationPosition,
+  position2: StationPosition
+) => {
+  return new CatmullRomCurve3([
+    new Vector3(position1.x, position1.y, position1.z),
+    new Vector3(position2.x, position2.y, position2.z)
+  ])
+}
 
 defineProps({
   stationList: {
-    type: Array as PropType<Array<Station>>
+    type: Array as PropType<Array<Station>>,
+    default: () => []
   }
 })
 </script>

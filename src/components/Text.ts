@@ -2,7 +2,7 @@ import { defineComponent, PropType, watch } from 'vue'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { MeshSetupInterface } from 'troisjs/src/meshes/Mesh'
-import { Mesh, MeshInjectionKey } from 'troisjs'
+import { Mesh } from 'troisjs'
 
 interface TextSetupInterface extends MeshSetupInterface {
   geometry?: TextGeometry
