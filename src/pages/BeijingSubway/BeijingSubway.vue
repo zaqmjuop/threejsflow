@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute-div">{{ hoverData.pointerX }}</div>
+  <div class="absolute-div"></div>
   <Renderer
     ref="rendererC"
     antialias
@@ -20,18 +20,42 @@ import { Camera, PointLight, Renderer, Scene } from 'troisjs'
 import StationList from './StationList.vue'
 import BeijingRegion from './BeijingRegion.vue'
 import * as THREE from 'three'
-import { reactive, ref, onMounted } from 'vue'
-import { useHover } from '@/use/useHover'
+import { ref, onMounted, watch } from 'vue'
+import { useHoverTarget } from '@/use/useHoverTarget'
 
 const cameraRef = ref<typeof Camera | null>(null)
 const sceneRef = ref<typeof Scene | null>(null)
-const hoverData = ref<any>({})
+
+type Object3D = THREE.Object3D & {
+  material: THREE.MeshBasicMaterial
+}
+
+let hoverTargetRef: ReturnType<typeof useHoverTarget> | null = null
 
 onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
   if (camera && scene) {
-    useHover({ camera, scene })
+    hoverTargetRef = useHoverTarget({
+      camera,
+      scene
+    })
+
+    let prevObjectColor = -1
+
+    watch(
+      () => hoverTargetRef?.value?.object,
+      (object?, prev?) => {
+        if (prev && prevObjectColor >= 0) {
+          ;(prev as Object3D).material.color.setHex(prevObjectColor)
+          prevObjectColor = -1
+        }
+        if (object) {
+          prevObjectColor = (object as Object3D).material.color.getHex()
+          ;(object as Object3D).material.color.setHex(0xffe599)
+        }
+      }
+    )
   }
 })
 
