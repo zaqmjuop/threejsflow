@@ -34,6 +34,8 @@ type Object3D = THREE.Object3D & {
 
 let hoverTargetRef: ReturnType<typeof useHoverTarget> | null = null
 
+let selecteds: THREE.Intersection<THREE.Object3D<THREE.Event>>[] = []
+
 onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
@@ -62,6 +64,17 @@ onMounted(() => {
         }
       }
     )
+
+    watch(selector, (value) => {
+      selecteds.forEach(item => {
+        item.object.scale.set(1, 1, 1)
+      })
+      selecteds = Array.from(selector)
+      selecteds.forEach(item => {
+        item.object.scale.set(1.1, 1.1, 1.1)
+      })
+      // console.log(value)
+    })
   }
 })
 

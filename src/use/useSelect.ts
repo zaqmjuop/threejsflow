@@ -29,7 +29,7 @@ export const useSelect = ({
       selecteds.splice(0, selecteds.length)
       uuidRecord = {}
     }
-    const targetUUID = target.object.uuid
+    const targetUUID = target?.object.uuid
     if (!uuidRecord[targetUUID]) {
       selecteds.push(target)
       uuidRecord[targetUUID] = true
