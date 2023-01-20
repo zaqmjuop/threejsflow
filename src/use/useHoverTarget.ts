@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { onBeforeUnmount, ref , shallowRef} from 'vue'
+import { onBeforeUnmount, ref, shallowRef } from 'vue'
 
 export const useHoverTarget = ({
   camera,

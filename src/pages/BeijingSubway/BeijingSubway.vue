@@ -20,11 +20,13 @@ import { Camera, PointLight, Renderer, Scene } from 'troisjs'
 import StationList from './StationList.vue'
 import BeijingRegion from './BeijingRegion.vue'
 import * as THREE from 'three'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, shallowRef } from 'vue'
 import { useHoverTarget } from '@/use/useHoverTarget'
+import { useSelect } from '@/use/useSelect'
 
-const cameraRef = ref<typeof Camera | null>(null)
-const sceneRef = ref<typeof Scene | null>(null)
+const cameraRef = shallowRef<typeof Camera | null>(null)
+const sceneRef = shallowRef<typeof Scene | null>(null)
+const rendererC = shallowRef<typeof Renderer | null>(null)
 
 type Object3D = THREE.Object3D & {
   material: THREE.MeshBasicMaterial
@@ -35,13 +37,17 @@ let hoverTargetRef: ReturnType<typeof useHoverTarget> | null = null
 onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
-  if (camera && scene) {
+  const canvas = rendererC.value?.canvas
+  console.log()
+  if (camera && scene && canvas instanceof HTMLCanvasElement) {
     hoverTargetRef = useHoverTarget({
       camera,
       scene
     })
 
     let prevObjectColor = -1
+
+    const selector = useSelect({ camera, scene, domElement: canvas })
 
     watch(
       () => hoverTargetRef?.value?.object,
