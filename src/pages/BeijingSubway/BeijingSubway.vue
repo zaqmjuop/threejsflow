@@ -11,6 +11,7 @@
       <PointLight :position="{ z: 300 }" />
       <BeijingRegion />
       <StationList :stationList="BEIJING_STATION_DATA"></StationList>
+      <DragControll :position="{ x: -50, z: 10, y: 30 }" />
     </Scene>
   </Renderer>
 </template>
@@ -20,9 +21,10 @@ import { Camera, PointLight, Renderer, Scene } from 'troisjs'
 import StationList from './StationList.vue'
 import BeijingRegion from './BeijingRegion.vue'
 import * as THREE from 'three'
-import { ref, onMounted, watch, shallowRef } from 'vue'
+import { onMounted, watch, shallowRef, provide, shallowReactive } from 'vue'
 import { useHoverTarget } from '@/use/useHoverTarget'
 import { useSelect } from '@/use/useSelect'
+import DragControll from '@/components/DragControll.vue'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
@@ -34,7 +36,10 @@ type Object3D = THREE.Object3D & {
 
 let hoverTargetRef: ReturnType<typeof useHoverTarget> | null = null
 
-let selecteds: THREE.Intersection<THREE.Object3D<THREE.Event>>[] = []
+const selecteds: THREE.Intersection<THREE.Object3D<THREE.Event>>[] =
+  shallowReactive([])
+
+provide('selecteds', selecteds)
 
 onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
@@ -66,12 +71,12 @@ onMounted(() => {
     )
 
     watch(selector, (value) => {
-      selecteds.forEach(item => {
-        item.object.scale.set(1, 1, 1)
+      selecteds.forEach((item) => {
+        item?.object.scale.set(1, 1, 1)
       })
-      selecteds = Array.from(selector)
-      selecteds.forEach(item => {
-        item.object.scale.set(1.1, 1.1, 1.1)
+      selecteds.splice(0, selecteds.length, ...selector)
+      selecteds.forEach((item) => {
+        item?.object.scale.set(1.1, 1.1, 1.1)
       })
       // console.log(value)
     })

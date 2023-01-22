@@ -43,6 +43,7 @@
           }"
         />
       </Text2>
+
       <Tube
         v-if="index > 0"
         :path="getLineCurve(stationList[index - 1].position, item.position)"
