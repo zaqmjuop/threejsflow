@@ -1,23 +1,29 @@
 <template>
-  <Arrow
+  <CylinderArrow
     :color="'#ff0000'"
     :position="position"
     :rotation="{ x: 0, y: 0, z: getDegVal(90) }"
-  ></Arrow>
-  <Arrow
+  ></CylinderArrow>
+  <CylinderArrow
     :color="'#00ff00'"
     :position="position"
     :rotation="{ x: getDegVal(90), y: 0, z: 0 }"
-  ></Arrow>
-  <Arrow
+  ></CylinderArrow>
+  <CylinderArrow
     :color="'#0000ff'"
     :position="position"
     :rotation="{ x: 0, y: 0, z: 0 }"
-  ></Arrow>
+  ></CylinderArrow>
+  <RingArrow
+    :color="'#ff00ff'"
+    :position="position"
+    :rotation="{ x: 0, y: 0, z: 0 }"
+  ></RingArrow>
 </template>
 <script setup lang="ts">
 import { PropType } from 'vue'
-import Arrow from '@/components/Arrow.vue'
+import CylinderArrow from '@/components/CylinderArrow.vue'
+import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 
 defineProps({
