@@ -29,7 +29,7 @@
         y: 10,
         z: 0
       }"
-      :width="2"
+      :width="4"
       :height="2"
       :width-segments="1"
     >
