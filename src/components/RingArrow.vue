@@ -31,8 +31,7 @@
       }"
       :width="2"
       :height="2"
-      :widthSegments="3"
-      :height-segments="4"
+      :width-segments="1"
     >
       <PhongMaterial
         :color="color"

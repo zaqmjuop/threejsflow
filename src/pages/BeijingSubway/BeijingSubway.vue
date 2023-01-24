@@ -78,7 +78,7 @@ onMounted(() => {
       selecteds.forEach((item) => {
         item?.object.scale.set(1.1, 1.1, 1.1)
       })
-      console.log(selector)
+      // console.log(selector)
     })
   }
 })
