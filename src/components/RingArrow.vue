@@ -23,12 +23,34 @@
         }"
       ></PhongMaterial>
     </Ring>
+    <Triangle
+      :position="{
+        x: 10,
+        y: 10,
+        z: 0
+      }"
+      :width="2"
+      :height="2"
+      :widthSegments="3"
+      :height-segments="4"
+    >
+      <PhongMaterial
+        :color="color"
+        :props="{
+          emissive: 0x072534,
+          opacity: 0.7,
+          side: 2,
+          flatShading: true
+        }"
+      ></PhongMaterial
+    ></Triangle>
   </Group>
 </template>
 <script lang="ts" setup>
 import { PhongMaterial, Group, Ring } from 'troisjs'
 import { PropType } from 'vue'
 import { getDegVal } from '@/common/getDegVal'
+import Triangle from './Triangle'
 
 defineProps({
   color: {
