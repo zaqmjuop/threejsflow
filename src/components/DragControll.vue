@@ -17,7 +17,17 @@
   <RingArrow
     :color="'#ff00ff'"
     :position="position"
-    :rotation="{ x: 0, y: 0, z: 0 }"
+    :rotation="{ x: 0, y: 0, z: getDegVal(-90) }"
+  ></RingArrow>
+  <RingArrow
+    :color="'#ffff00'"
+    :position="position"
+    :rotation="{ x: getDegVal(90), y: 0, z: 0 }"
+  ></RingArrow>
+  <RingArrow
+    :color="'#00ffff'"
+    :position="position"
+    :rotation="{ x: 0, y: getDegVal(90), z: 0 }"
   ></RingArrow>
 </template>
 <script setup lang="ts">

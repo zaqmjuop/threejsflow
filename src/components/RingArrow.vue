@@ -25,13 +25,17 @@
     </Ring>
     <Triangle
       :position="{
-        x: 10,
-        y: 10,
+        x: 5.5,
+        y: -1.4,
         z: 0
       }"
-      :width="4"
+      :rotation="{
+        x: 0,
+        y: 0,
+        z: getDegVal(135)
+      }"
+      :width="2"
       :height="2"
-      :width-segments="1"
     >
       <PhongMaterial
         :color="color"
