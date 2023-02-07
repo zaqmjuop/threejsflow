@@ -1,5 +1,6 @@
 <template>
-  <CylinderArrow
+  
+  <CylinderArrow 
     :color="'#ff0000'"
     :position="position"
     :rotation="{ x: 0, y: 0, z: getDegVal(90) }"
@@ -31,10 +32,13 @@
   ></RingArrow>
 </template>
 <script setup lang="ts">
-import { PropType } from 'vue'
+import * as THREE from 'three'
+import { inject, PropType, ShallowRef } from 'vue'
 import CylinderArrow from '@/components/CylinderArrow.vue'
 import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
+import { Renderer } from 'troisjs'
+import { getMeshByClient } from '@/common/getMeshByClient'
 
 defineProps({
   color: {
@@ -46,4 +50,37 @@ defineProps({
     default: () => ({ x: 0, y: 0, z: 0 })
   }
 })
+
+const render:
+  | ShallowRef<
+      | (typeof Renderer & {
+          canvas: HTMLCanvasElement
+          camera: THREE.PerspectiveCamera
+          scene: THREE.Scene
+        })
+      | null
+    >
+  | undefined = inject('render')
+
+const dragTranslate = () => {}
+
+// const onPointerMove = (ev: PointerEvent) => {}
+
+// const onPointerUp = (ev: PointerEvent) => {
+//   window.removeEventListener('pointermove', onPointerMove)
+//   window.removeEventListener('pointerup', onPointerUp)
+// }
+
+// const onPointerDown = (ev: PointerEvent) => {
+//   if (!render?.value?.camera || !render.value.scene) {
+//     return
+//   }
+//   window.addEventListener('pointermove', onPointerMove)
+//   window.addEventListener('pointerup', onPointerUp)
+
+//   const target = getMeshByClient(ev, render.value.camera, render.value.scene)
+//   console.log(target)
+// }
+
+// window.addEventListener('pointerdown', onPointerDown)
 </script>

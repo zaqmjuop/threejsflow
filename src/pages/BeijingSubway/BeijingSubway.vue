@@ -4,7 +4,11 @@
     ref="rendererC"
     antialias
     :orbit-ctrl="{ enableDamping: true }"
+    
     resize="window"
+    :pointer="{
+      touch: true
+    }"
   >
     <Camera ref="cameraRef" :position="{ x: 0, y: 30, z: 130 }" />
     <Scene ref="sceneRef">
@@ -30,6 +34,8 @@ const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
 const rendererC = shallowRef<typeof Renderer | null>(null)
 
+provide('render', rendererC)
+
 type Object3D = THREE.Object3D & {
   material: THREE.MeshBasicMaterial
 }
@@ -45,7 +51,7 @@ onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
   const canvas = rendererC.value?.canvas
-  console.log()
+
   if (camera && scene && canvas instanceof HTMLCanvasElement) {
     hoverTargetRef = useHoverTarget({
       camera,
@@ -78,7 +84,6 @@ onMounted(() => {
       selecteds.forEach((item) => {
         item?.object.scale.set(1.1, 1.1, 1.1)
       })
-      // console.log(selector)
     })
   }
 })
