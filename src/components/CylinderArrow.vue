@@ -63,6 +63,7 @@ import {
 } from 'vue'
 import { Renderer } from 'troisjs'
 import { usePointerDown } from '@/use/usePointerDown'
+import { useDrag } from '@/use/useDrag'
 
 defineProps({
   color: {
@@ -142,6 +143,7 @@ const onClick = () => {
 onMounted(() => {
   const camera = render?.value?.camera
   const scene = render?.value?.scene
+  const groupUUID = group.value?.o3d?.uuid
   if (camera && scene) {
     const pointerDownState = usePointerDown({ camera, scene })
     watch(
@@ -152,6 +154,24 @@ onMounted(() => {
         }
       }
     )
+  }
+  if (camera && scene && groupUUID) {
+    useDrag({
+      camera,
+      scene,
+      uuid: groupUUID,
+      onDragStart() {
+        console.log('onDragStart')
+      },
+
+      onDragMove() {
+        console.log('onDragMove')
+      },
+
+      onDragEnd() {
+        console.log('onDragEnd')
+      }
+    })
   }
 })
 </script>

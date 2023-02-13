@@ -4,18 +4,21 @@ import { shallowReactive } from 'vue'
 
 export const usePointerDown = ({
   camera,
-  scene
+  scene,
+  onPointerDown
 }: {
   camera: Camera
   scene: Scene
+  onPointerDown?: (event: PointerEvent) => void
 }) => {
   const targetState = shallowReactive<{
     value: THREE.Intersection<THREE.Object3D<THREE.Event>> | null
     event: PointerEvent | null
   }>({ value: null, event: null })
-  const onPointerDown = (event: PointerEvent) => {
+  const handlePointerDown = (event: PointerEvent) => {
     targetState.value = getPointerTarget(event, camera, scene)
+    onPointerDown?.(event)
   }
-  window.addEventListener('pointerdown', onPointerDown)
+  window.addEventListener('pointerdown', handlePointerDown)
   return targetState
 }
