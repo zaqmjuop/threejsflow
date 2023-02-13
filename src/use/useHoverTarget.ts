@@ -15,9 +15,6 @@ export const useHoverTarget = ({
   > | null>(null)
 
   const onPointerMove = (event: PointerEvent) => {
-    if (Date.now() % 16) {
-      return
-    }
     // 将鼠标位置归一化为设备坐标。x 和 y 方向的取值范围是 (-1 to +1)
     //  左上角 -1， 1 右下角 1， -1
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1

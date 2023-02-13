@@ -38,7 +38,6 @@ import CylinderArrow from '@/components/CylinderArrow.vue'
 import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 import { Renderer } from 'troisjs'
-import { getMeshByClient } from '@/common/getMeshByClient'
 
 defineProps({
   color: {

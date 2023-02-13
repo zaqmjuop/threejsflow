@@ -1,11 +1,13 @@
 <template>
   <Group
+    ref="group"
     :position="{
       x: position.x,
       y: position.y,
       z: position.z
     }"
     :rotation="rotation"
+    @pointerDown="onPointerDown"
   >
     <Cylinder
       :position="{
@@ -16,12 +18,6 @@
       :height="10"
       :radiusTop="1"
       :radiusBottom="1"
-      @pointerDown="onPointerDown"
-      @pointerMove="onPointerMove"
-      @pointerUp="onPointerUp"
-      @pointerOver="onPointerOver"
-      @pointerEnter="onPointerEnter"
-      @pointerLeave="onPointerLeave"
       @click="onClick"
     >
       <PhongMaterial
@@ -42,10 +38,6 @@
       }"
       :height="5"
       :radius="1.5"
-      @pointerDown="onPointerDown"
-      @click="onClick"
-      @pointerOver="onPointerOver"
-      @pointerUp="onPointerUp"
     >
       <PhongMaterial
         :color="color"
@@ -60,7 +52,17 @@
 </template>
 <script lang="ts" setup>
 import { Cylinder, Cone, PhongMaterial, Group } from 'troisjs'
-import { PropType, shallowReactive } from 'vue'
+import {
+  PropType,
+  shallowReactive,
+  ShallowRef,
+  inject,
+  onMounted,
+  ref,
+  watch
+} from 'vue'
+import { Renderer } from 'troisjs'
+import { usePointerDown } from '@/use/usePointerDown'
 
 defineProps({
   color: {
@@ -88,6 +90,19 @@ const emit = defineEmits<{
 const state = shallowReactive({
   dragStart: null as null | PointerEvent
 })
+
+const group = ref<null | typeof Group>(null)
+
+const render:
+  | ShallowRef<
+      | (typeof Renderer & {
+          canvas: HTMLCanvasElement
+          camera: THREE.PerspectiveCamera
+          scene: THREE.Scene
+        })
+      | null
+    >
+  | undefined = inject('render')
 
 const onPointerMove = (ev: PointerEvent) => {
   console.log('onPointerMove')
@@ -123,4 +138,20 @@ const onPointerEnter = () => {
 const onClick = () => {
   console.log('onClick')
 }
+
+onMounted(() => {
+  const camera = render?.value?.camera
+  const scene = render?.value?.scene
+  if (camera && scene) {
+    const pointerDownState = usePointerDown({ camera, scene })
+    watch(
+      () => pointerDownState.value,
+      () => {
+        if (pointerDownState.value?.object?.uuid === group.value?.o3d?.uuid) {
+          emit('pointerDown', pointerDownState.event as PointerEvent)
+        }
+      }
+    )
+  }
+})
 </script>
