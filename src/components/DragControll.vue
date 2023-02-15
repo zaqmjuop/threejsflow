@@ -1,45 +1,53 @@
 <template>
-  
-  <CylinderArrow 
+  <CylinderArrow
     :color="'#ff0000'"
-    :position="position"
+    :position="state"
     :rotation="{ x: 0, y: 0, z: getDegVal(90) }"
+    @drag-start="handleDragStart($event, 'x')"
+    @drag-move="handleDragMove($event, 'x')"
+    @drag-end="handleDragEnd($event, 'x')"
   ></CylinderArrow>
   <CylinderArrow
     :color="'#00ff00'"
-    :position="position"
+    :position="state"
     :rotation="{ x: getDegVal(90), y: 0, z: 0 }"
+    @drag-start="handleDragStart($event, 'x')"
+    @drag-move="handleDragMove($event, 'x')"
+    @drag-end="handleDragEnd($event, 'x')"
   ></CylinderArrow>
   <CylinderArrow
     :color="'#0000ff'"
-    :position="position"
+    :position="state"
     :rotation="{ x: 0, y: 0, z: 0 }"
+    @drag-start="handleDragStart($event, 'x')"
+    @drag-move="handleDragMove($event, 'x')"
+    @drag-end="handleDragEnd($event, 'x')"
   ></CylinderArrow>
   <RingArrow
     :color="'#ff00ff'"
-    :position="position"
+    :position="state"
     :rotation="{ x: 0, y: 0, z: getDegVal(-90) }"
   ></RingArrow>
   <RingArrow
     :color="'#ffff00'"
-    :position="position"
+    :position="state"
     :rotation="{ x: getDegVal(90), y: 0, z: 0 }"
   ></RingArrow>
   <RingArrow
     :color="'#00ffff'"
-    :position="position"
+    :position="state"
     :rotation="{ x: 0, y: getDegVal(90), z: 0 }"
   ></RingArrow>
 </template>
 <script setup lang="ts">
 import * as THREE from 'three'
-import { inject, PropType, ShallowRef } from 'vue'
+import { inject, PropType, shallowReactive, ShallowRef } from 'vue'
 import CylinderArrow from '@/components/CylinderArrow.vue'
 import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 import { Renderer } from 'troisjs'
 
-defineProps({
+const props = defineProps({
   color: {
     type: String,
     default: ''
@@ -61,25 +69,27 @@ const render:
     >
   | undefined = inject('render')
 
-const dragTranslate = () => {}
+const state = shallowReactive<{
+  dragStart: null | PointerEvent
+  x: number
+  y: number
+  z: number
+}>({
+  dragStart: null,
+  x: props.position.x,
+  y: props.position.y,
+  z: props.position.z
+})
 
-// const onPointerMove = (ev: PointerEvent) => {}
+const handleDragStart = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
+  state.dragStart = event
+  console.log(event)
+}
 
-// const onPointerUp = (ev: PointerEvent) => {
-//   window.removeEventListener('pointermove', onPointerMove)
-//   window.removeEventListener('pointerup', onPointerUp)
-// }
+const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => { 
+}
 
-// const onPointerDown = (ev: PointerEvent) => {
-//   if (!render?.value?.camera || !render.value.scene) {
-//     return
-//   }
-//   window.addEventListener('pointermove', onPointerMove)
-//   window.addEventListener('pointerup', onPointerUp)
-
-//   const target = getMeshByClient(ev, render.value.camera, render.value.scene)
-//   console.log(target)
-// }
-
-// window.addEventListener('pointerdown', onPointerDown)
+const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
+  state.dragStart = null
+}
 </script>

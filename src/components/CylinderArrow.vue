@@ -7,7 +7,6 @@
       z: position.z
     }"
     :rotation="rotation"
-    @pointerDown="onPointerDown"
   >
     <Cylinder
       :position="{
@@ -18,7 +17,6 @@
       :height="10"
       :radiusTop="1"
       :radiusBottom="1"
-      @click="onClick"
     >
       <PhongMaterial
         :color="color"
@@ -53,17 +51,8 @@
 <script lang="ts" setup>
 import { Object3D } from 'three'
 import { Cylinder, Cone, PhongMaterial, Group } from 'troisjs'
-import {
-  PropType,
-  shallowReactive,
-  ShallowRef,
-  inject,
-  onMounted,
-  ref,
-  watch
-} from 'vue'
+import { PropType, ShallowRef, inject, onMounted, ref } from 'vue'
 import { Renderer } from 'troisjs'
-import { usePointerDown } from '@/use/usePointerDown'
 import { useDrag } from '@/use/useDrag'
 
 defineProps({
@@ -82,16 +71,10 @@ defineProps({
 })
 
 const emit = defineEmits<{
-  (event: 'change'): void
-  (event: 'pointerDown', ev: PointerEvent): void
-  (event: 'pointerMove', ev: PointerEvent): void
-  (event: 'pointerUp', ev: PointerEvent): void
+  (event: 'dragStart', ev: PointerEvent): void
   (event: 'dragMove', ev: PointerEvent): void
+  (event: 'dragEnd', ev: PointerEvent): void
 }>()
-
-const state = shallowReactive({
-  dragStart: null as null | PointerEvent
-})
 
 const group = ref<null | typeof Group>(null)
 
@@ -106,71 +89,25 @@ const render:
     >
   | undefined = inject('render')
 
-const onPointerMove = (ev: PointerEvent) => {
-  console.log('onPointerMove')
-  emit('pointerMove', ev)
-  if (state.dragStart) {
-    emit('dragMove', ev)
-    console.log(state.dragStart, ev)
-    return
-  }
-}
-
-const onPointerUp = (ev: PointerEvent) => {
-  console.log('onPointerUp')
-  state.dragStart = null
-  emit('pointerUp', ev)
-}
-
-const onPointerDown = (ev: PointerEvent) => {
-  console.log(111)
-  state.dragStart = ev
-  emit('pointerDown', ev)
-}
-
-const onPointerOver = () => {
-  console.log('onPointerOver')
-}
-const onPointerLeave = () => {
-  console.log('onPointerLeave')
-}
-const onPointerEnter = () => {
-  console.log('onPointerEnter')
-}
-const onClick = () => {
-  console.log('onClick')
-}
-
 onMounted(() => {
   const camera = render?.value?.camera
   const scene = render?.value?.scene
   const groupObj: Object3D | null = group.value?.o3d
-  if (camera && scene) {
-    const pointerDownState = usePointerDown({ camera, scene })
-    watch(
-      () => pointerDownState.value,
-      () => {
-        if (pointerDownState.value?.object?.uuid === group.value?.o3d?.uuid) {
-          emit('pointerDown', pointerDownState.event as PointerEvent)
-        }
-      }
-    )
-  }
+
   if (camera && scene && groupObj) {
     useDrag({
       camera,
       scene,
       uuid: groupObj.uuid,
-      onDragStart() {
-        console.log('onDragStart')
+      onDragStart(event) {
+        emit('dragStart', event)
+      },
+      onDragMove(event) {
+        emit('dragMove', event)
       },
 
-      onDragMove() {
-        console.log('onDragMove')
-      },
-
-      onDragEnd() {
-        console.log('onDragEnd')
+      onDragEnd(event) {
+        emit('dragEnd', event)
       }
     })
   }
