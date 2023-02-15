@@ -51,6 +51,7 @@
   ></Group>
 </template>
 <script lang="ts" setup>
+import { Object3D } from 'three'
 import { Cylinder, Cone, PhongMaterial, Group } from 'troisjs'
 import {
   PropType,
@@ -143,7 +144,7 @@ const onClick = () => {
 onMounted(() => {
   const camera = render?.value?.camera
   const scene = render?.value?.scene
-  const groupUUID = group.value?.o3d?.uuid
+  const groupObj: Object3D | null = group.value?.o3d
   if (camera && scene) {
     const pointerDownState = usePointerDown({ camera, scene })
     watch(
@@ -155,11 +156,11 @@ onMounted(() => {
       }
     )
   }
-  if (camera && scene && groupUUID) {
+  if (camera && scene && groupObj) {
     useDrag({
       camera,
       scene,
-      uuid: groupUUID,
+      uuid: groupObj.uuid,
       onDragStart() {
         console.log('onDragStart')
       },

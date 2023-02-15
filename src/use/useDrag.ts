@@ -1,4 +1,5 @@
-import { Scene, Camera } from 'three'
+import { getParentByUUID } from '@/common/bubbleParent'
+import { Scene, Camera, Object3D } from 'three'
 import { shallowReactive } from 'vue'
 import { usePointerDown } from './usePointerDown'
 export const useDrag = ({
@@ -11,13 +12,13 @@ export const useDrag = ({
 }: {
   camera: Camera
   scene: Scene
-  uuid: string | number
+  uuid: string
   onDragStart?: (event: PointerEvent) => void
   onDragMove?: (event: PointerEvent) => void
   onDragEnd?: (event: PointerEvent) => void
 }) => {
   const state = shallowReactive<{
-    value: THREE.Intersection<THREE.Object3D<THREE.Event>> | null
+    value: Object3D | null
     event: PointerEvent | null
   }>({
     value: null,
@@ -38,11 +39,15 @@ export const useDrag = ({
     camera,
     scene,
     onPointerDown(event) {
-      console.log(pointerDownState.value, uuid)
-      if (pointerDownState.value?.object?.uuid !== uuid) {
+      let obj: Object3D | null = pointerDownState.value?.object || null
+      if (!obj) {
         return
       }
-      state.value = pointerDownState.value
+      obj = getParentByUUID(obj, uuid)
+      if (!obj) {
+        return
+      }
+      state.value = obj
       onDragStart?.(event)
       window.addEventListener('pointermove', handlePointerMove)
       window.addEventListener('pointerup', handlePointerUp)
