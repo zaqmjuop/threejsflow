@@ -73,11 +73,13 @@ const render:
 
 const state = shallowReactive<{
   dragStart: null | PointerEvent
+  prevMove: null | PointerEvent
   x: number
   y: number
   z: number
 }>({
   dragStart: null,
+  prevMove: null,
   x: props.position.x,
   y: props.position.y,
   z: props.position.z
@@ -95,7 +97,13 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   const cameraDirection = new Vector3()
   const camera = render?.value?.camera
   camera && camera.getWorldDirection(cameraDirection)
-  console.log({ movementX, movementY, cameraDirection })
+  console.log({ movementX, movementY, cameraDirection, event })
+  const prevPointer = state.prevMove || state.dragStart
+  if (prevPointer) {
+    state.x += movementX
+    state.y -= movementY
+    state.prevMove = event
+  }
 }
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
