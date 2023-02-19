@@ -46,6 +46,7 @@ import CylinderArrow from '@/components/CylinderArrow.vue'
 import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 import { Renderer } from 'troisjs'
+import { Vector3 } from 'three'
 
 const props = defineProps({
   color: {
@@ -83,10 +84,14 @@ const state = shallowReactive<{
 
 const handleDragStart = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   state.dragStart = event
-  console.log(event)
 }
 
-const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => { 
+const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
+  const { movementX, movementY } = event
+  const cameraDirection = new Vector3()
+  const camera = render?.value?.camera
+  camera && camera.getWorldDirection(cameraDirection)
+  console.log({ movementX, movementY, cameraDirection })
 }
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {

@@ -3,8 +3,7 @@
   <Renderer
     ref="rendererC"
     antialias
-    :orbit-ctrl="{ enableDamping: true }"
-    
+    :orbit-ctrl="{ enableDamping: true, enablePan: true, enableRotate: false }"
     resize="window"
     :pointer="{
       touch: true
