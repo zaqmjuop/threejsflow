@@ -3,7 +3,9 @@
   <Renderer
     ref="rendererC"
     antialias
-    :orbit-ctrl="{ enableDamping: true, enablePan: true, enableRotate: false }"
+    :orbit-ctrl="{
+      enableRotate: false
+    }"
     resize="window"
     :pointer="{
       touch: true
@@ -28,10 +30,18 @@ import { onMounted, watch, shallowRef, provide, shallowReactive } from 'vue'
 import { useHoverTarget } from '@/use/useHoverTarget'
 import { useSelect } from '@/use/useSelect'
 import DragControll from '@/components/DragControll.vue'
+import { useCameraStore } from '@/store/cameraStore'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
 const rendererC = shallowRef<typeof Renderer | null>(null)
+
+const cameraStore = useCameraStore()
+
+watch(
+  () => cameraStore.draging,
+  () => {}
+)
 
 provide('render', rendererC)
 
@@ -84,6 +94,16 @@ onMounted(() => {
         item?.object.scale.set(1.1, 1.1, 1.1)
       })
     })
+  }
+  const orbitCtrl = rendererC.value?.three?.cameraCtrl
+
+  if (orbitCtrl) {
+    watch(
+      () => cameraStore.draging,
+      (draging: boolean) => {
+        orbitCtrl.enableRotate = !draging
+      }
+    )
   }
 })
 

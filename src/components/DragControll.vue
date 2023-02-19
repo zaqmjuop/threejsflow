@@ -47,6 +47,7 @@ import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 import { Renderer } from 'troisjs'
 import { Vector3 } from 'three'
+import { useCameraStore } from '@/store/cameraStore'
 
 const props = defineProps({
   color: {
@@ -82,8 +83,11 @@ const state = shallowReactive<{
   z: props.position.z
 })
 
+const cameraStore = useCameraStore()
+
 const handleDragStart = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   state.dragStart = event
+  cameraStore.dragStart = event
 }
 
 const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
@@ -96,5 +100,6 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   state.dragStart = null
+  cameraStore.dragStart = null
 }
 </script>

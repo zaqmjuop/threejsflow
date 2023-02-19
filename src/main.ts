@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { router } from './router/router'
 import * as THREE from 'three'
+import { createPinia } from 'pinia'
 
 if (!location.pathname.endsWith('/')) {
   location.pathname += '/'
@@ -12,6 +13,7 @@ if (!location.pathname.endsWith('/')) {
   document.body.appendChild(warning)
 } else {
   const app = createApp(App)
+  app.use(createPinia())
 
   app.use(router)
 
