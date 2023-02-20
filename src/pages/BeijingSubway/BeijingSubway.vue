@@ -4,7 +4,7 @@
     ref="rendererC"
     antialias
     :orbit-ctrl="{
-      enableRotate: false
+      enableRotate: true
     }"
     resize="window"
     :pointer="{

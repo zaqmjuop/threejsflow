@@ -12,6 +12,7 @@ if (!location.pathname.endsWith('/')) {
   const warning = WebGL.getWebGLErrorMessage()
   document.body.appendChild(warning)
 } else {
+  (window as any).THREE = THREE
   const app = createApp(App)
   app.use(createPinia())
 
