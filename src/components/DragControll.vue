@@ -97,7 +97,9 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   const cameraDirection = new Vector3()
   const camera = render?.value?.camera
   camera && camera.getWorldDirection(cameraDirection)
-  console.log({ movementX, movementY, cameraDirection, event })
+  const pointerVector3 = new Vector3(movementX, -movementY, -1)
+  const euler = new THREE.Euler().setFromVector3(cameraDirection)
+  console.log(pointerVector3, euler)
   const prevPointer = state.prevMove || state.dragStart
   if (prevPointer) {
     state.x += movementX
