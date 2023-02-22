@@ -101,9 +101,11 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
     camera && new Vector3(0, 0, 0).setFromEuler(camera.rotation)
   const pointerVector3 = new Vector3(movementX, -movementY, -1)
 
+  const v1 = cameraRotation
+
   const getVerticalV2 = (v1: Vector3) => {
-    const x2 = 0.5
-    const y2 = 0.5
+    const x2 = movementX
+    const y2 = -movementY
     const z2 = -(v1.x * x2 + v1.y * y2) / v1.z
     console.log(new Vector3(x2, y2, z2))
     return new Vector3(x2, y2, z2)
@@ -118,9 +120,10 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
 
   console.log(pointerVector3, cameraDirection, cameraRotation, camera, v2, v3)
   const prevPointer = state.prevMove || state.dragStart
-  if (prevPointer) {
-    state.x += movementX
-    state.y -= movementY
+  if (prevPointer && cameraRotation && v1) {
+    state.x += v1.x
+    state.y += v1.y
+    state.z += v1.z
     state.prevMove = event
   }
 }
