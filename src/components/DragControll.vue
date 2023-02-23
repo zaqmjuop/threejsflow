@@ -46,8 +46,9 @@ import CylinderArrow from '@/components/CylinderArrow.vue'
 import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 import { Renderer } from 'troisjs'
-import { Vector3 } from 'three'
+import { Vector2, Vector3 } from 'three'
 import { useCameraStore } from '@/store/cameraStore'
+import { start } from 'repl'
 
 const props = defineProps({
   color: {
@@ -98,7 +99,11 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
     return
   }
 
-  const { movementX, movementY } = event
+  const prevMove = state.prevMove || state.dragStart || event
+  const moved = new Vector2(
+    event.clientX - prevMove.clientX,
+    event.clientY - prevMove.clientY
+  )
 
   const cameraDirection = new Vector3()
   camera.getWorldDirection(cameraDirection)
@@ -107,16 +112,17 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   cameraRight.crossVectors(camera.up, cameraDirection)
 
   let dir = cameraRight
-  if (movementX) {
-    dir = movementX < 0 ? cameraRight : cameraRight.clone().negate()
-  } else if (movementY) {
-    dir = movementY < 0 ? camera.up : camera.up.clone().negate()
+  if (moved.x) {
+    dir = moved.x < 0 ? cameraRight : cameraRight.clone().negate()
+  } else if (moved.y) {
+    dir = moved.y < 0 ? camera.up : camera.up.clone().negate()
   }
 
   state.x += dir.x
   state.y += dir.y
   state.z += dir.z
   state.prevMove = event
+  console.log(moved, dir)
 }
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
