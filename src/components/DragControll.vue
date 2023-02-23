@@ -93,39 +93,30 @@ const handleDragStart = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
 }
 
 const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
-  const { movementX, movementY } = event
-  const cameraDirection = new Vector3()
   const camera = render?.value?.camera
-  camera && camera.getWorldDirection(cameraDirection)
-  const cameraRotation =
-    camera && new Vector3(0, 0, 0).setFromEuler(camera.rotation)
-  const pointerVector3 = new Vector3(movementX, -movementY, -1)
-
-  const v1 = cameraRotation
-
-  const getVerticalV2 = (v1: Vector3) => {
-    const x2 = movementX
-    const y2 = -movementY
-    const z2 = -(v1.x * x2 + v1.y * y2) / v1.z
-    console.log(new Vector3(x2, y2, z2))
-    return new Vector3(x2, y2, z2)
+  if (!camera) {
+    return
   }
 
-  const getVerticalV3 = (v1: Vector3, v2: Vector3) => {
-    return new Vector3(0, 0, 0).copy(v1).multiply(v2)
+  const { movementX, movementY } = event
+
+  const cameraDirection = new Vector3()
+  camera.getWorldDirection(cameraDirection)
+
+  const cameraRight = new Vector3()
+  cameraRight.crossVectors(camera.up, cameraDirection)
+
+  let dir = cameraRight
+  if (movementX) {
+    dir = movementX < 0 ? cameraRight : cameraRight.clone().negate()
+  } else if (movementY) {
+    dir = movementY < 0 ? camera.up : camera.up.clone().negate()
   }
 
-  const v2 = getVerticalV2(cameraDirection)
-  const v3 = getVerticalV3(v2, cameraDirection)
-
-  console.log(pointerVector3, cameraDirection, cameraRotation, camera, v2, v3)
-  const prevPointer = state.prevMove || state.dragStart
-  if (prevPointer && cameraRotation && v1) {
-    state.x += v1.x
-    state.y += v1.y
-    state.z += v1.z
-    state.prevMove = event
-  }
+  state.x += dir.x
+  state.y += dir.y
+  state.z += dir.z
+  state.prevMove = event
 }
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
