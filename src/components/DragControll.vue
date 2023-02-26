@@ -122,11 +122,13 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
     dir = moved.y < 0 ? camera.up : camera.up.clone().negate()
   }
 
-  state.x += dir.x
-  state.y += dir.y
-  state.z += dir.z
+  const distance = (state.dragStart as any)?.distance || 0
+  const scale = distance / window.innerHeight
+
+  state.x += dir.x * scale
+  state.y += dir.y * scale
+  state.z += dir.z * scale
   state.prevMove = event
-  console.log((state.dragStart as any)?.distance)
 }
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
