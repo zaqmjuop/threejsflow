@@ -46,9 +46,8 @@ import CylinderArrow from '@/components/CylinderArrow.vue'
 import RingArrow from '@/components/RingArrow.vue'
 import { getDegVal } from '@/common/getDegVal'
 import { Renderer } from 'troisjs'
-import { Vector2, Vector3 } from 'three'
+import { Vector2, Vector3, Intersection, Object3D, Event } from 'three'
 import { useCameraStore } from '@/store/cameraStore'
-import { start } from 'repl'
 
 const props = defineProps({
   color: {
@@ -73,7 +72,9 @@ const render:
   | undefined = inject('render')
 
 const state = shallowReactive<{
-  dragStart: null | PointerEvent
+  dragStart:
+    | null
+    | (PointerEvent & { dragStart: Intersection<Object3D<Event>> | null })
   prevMove: null | PointerEvent
   x: number
   y: number
@@ -88,7 +89,10 @@ const state = shallowReactive<{
 
 const cameraStore = useCameraStore()
 
-const handleDragStart = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
+const handleDragStart = (
+  event: PointerEvent & { dragStart: Intersection<Object3D<Event>> | null },
+  direction: 'x' | 'y' | 'z'
+) => {
   state.dragStart = event
   cameraStore.dragStart = event
 }
@@ -122,7 +126,7 @@ const handleDragMove = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {
   state.y += dir.y
   state.z += dir.z
   state.prevMove = event
-  console.log(moved, dir)
+  console.log((state.dragStart as any)?.distance)
 }
 
 const handleDragEnd = (event: PointerEvent, direction: 'x' | 'y' | 'z') => {

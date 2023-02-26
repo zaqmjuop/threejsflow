@@ -95,11 +95,12 @@ onMounted(() => {
   const groupObj: Object3D | null = group.value?.o3d
 
   if (camera && scene && groupObj) {
-    useDrag({
+    const dragState = useDrag({
       camera,
       scene,
       uuid: groupObj.uuid,
       onDragStart(event) {
+        Object.assign(event, { ...dragState.pointerDownState?.value })
         emit('dragStart', event)
       },
       onDragMove(event) {

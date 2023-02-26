@@ -20,9 +20,11 @@ export const useDrag = ({
   const state = shallowReactive<{
     value: Object3D | null
     event: PointerEvent | null
+    pointerDownState: ReturnType<typeof usePointerDown> | null
   }>({
     value: null,
-    event: null
+    event: null,
+    pointerDownState: null
   })
 
   const handlePointerMove = (event: PointerEvent) => {
@@ -53,6 +55,7 @@ export const useDrag = ({
       window.addEventListener('pointerup', handlePointerUp)
     }
   })
+  state.pointerDownState = pointerDownState
 
   return state
 }
