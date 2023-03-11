@@ -74,6 +74,8 @@ watch(
 )
 
 provide('render', rendererC)
+provide('scene', sceneRef)
+provide('camera', cameraRef)
 
 type Object3D = THREE.Object3D & {
   material: THREE.MeshBasicMaterial
