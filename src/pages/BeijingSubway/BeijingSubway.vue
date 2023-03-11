@@ -38,7 +38,7 @@ import { useHoverTarget } from '@/use/useHoverTarget'
 import { useSelect } from '@/use/useSelect'
 import DragControll from '@/components/DragControll.vue'
 import { useCameraStore } from '@/store/cameraStore'
-import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
+import { DragControls } from '@/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
@@ -49,11 +49,8 @@ const state = shallowReactive({
   enableOrbit: true
 })
 
-const enableCameraControl = computed(() => {
-  return !state.draging
-})
 const orbitCtrl = computed<OrbitControls | undefined>(
-  () => rendererC.value?.orbitCtrl
+  () => rendererC.value?.three.cameraCtrl
 )
 
 const cameraStore = useCameraStore()
@@ -66,7 +63,6 @@ watch(
 watch(
   () => state.draging,
   () => {
-    console.log('watch state.draging', state.draging)
     if (orbitCtrl.value) {
       orbitCtrl.value.enablePan = !state.draging
       orbitCtrl.value.enableRotate = !state.draging
@@ -127,26 +123,25 @@ onMounted(() => {
       })
     })
   }
-  const orbitCtrl = rendererC.value?.three?.cameraCtrl
 
-  if (orbitCtrl) {
+  if (orbitCtrl.value) {
     watch(
       () => cameraStore.draging,
       (draging: boolean) => {
-        orbitCtrl.enableRotate = !draging
+        orbitCtrl.value && (orbitCtrl.value.enableRotate = !draging)
       }
     )
   }
   if (camera && scene && canvas) {
     const dragControls = new DragControls(scene.children, camera, canvas)
+    dragControls.enabled = true
 
     // 监听拖拽事件并更新场景
-    dragControls.addEventListener('dragstart', function (event) {
-      console.log('dragstart')
+    dragControls.addEventListener('dragstart', () => {
       state.draging = true
     })
 
-    dragControls.addEventListener('dragend', function (event) {
+    dragControls.addEventListener('dragend', () => {
       state.draging = false
     })
   }
