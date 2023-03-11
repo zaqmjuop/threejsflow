@@ -13,6 +13,7 @@
   >
     <Camera ref="cameraRef" :position="{ x: 0, y: 30, z: 130 }" />
     <Scene ref="sceneRef">
+      <BloomCube ></BloomCube>
       <PointLight :position="{ z: 300 }" />
       <BeijingRegion />
       <StationList :stationList="BEIJING_STATION_DATA"></StationList>
@@ -40,6 +41,7 @@ import DragControll from '@/components/DragControll.vue'
 import { useCameraStore } from '@/store/cameraStore'
 import { DragControls } from '@/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import BloomCube from '@/components/BloomCube.vue'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
