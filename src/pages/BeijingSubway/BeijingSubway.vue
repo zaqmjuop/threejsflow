@@ -3,10 +3,10 @@
   <Renderer
     ref="rendererC"
     antialias
+    resize="window"
     :orbit-ctrl="{
       enableRotate: true
     }"
-    resize="window"
     :pointer="{
       touch: true
     }"
@@ -26,21 +26,53 @@ import { Camera, PointLight, Renderer, Scene } from 'troisjs'
 import StationList from './StationList.vue'
 import BeijingRegion from './BeijingRegion.vue'
 import * as THREE from 'three'
-import { onMounted, watch, shallowRef, provide, shallowReactive } from 'vue'
+import {
+  onMounted,
+  watch,
+  shallowRef,
+  provide,
+  shallowReactive,
+  computed
+} from 'vue'
 import { useHoverTarget } from '@/use/useHoverTarget'
 import { useSelect } from '@/use/useSelect'
 import DragControll from '@/components/DragControll.vue'
 import { useCameraStore } from '@/store/cameraStore'
+import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
 const rendererC = shallowRef<typeof Renderer | null>(null)
+const state = shallowReactive({
+  draging: false,
+  enableOrbit: true
+})
+
+const enableCameraControl = computed(() => {
+  return !state.draging
+})
+const orbitCtrl = computed<OrbitControls | undefined>(
+  () => rendererC.value?.orbitCtrl
+)
 
 const cameraStore = useCameraStore()
 
 watch(
   () => cameraStore.draging,
   () => {}
+)
+
+watch(
+  () => state.draging,
+  () => {
+    console.log('watch state.draging', state.draging)
+    if (orbitCtrl.value) {
+      orbitCtrl.value.enablePan = !state.draging
+      orbitCtrl.value.enableRotate = !state.draging
+    }
+  },
+  { immediate: true }
 )
 
 provide('render', rendererC)
@@ -104,6 +136,19 @@ onMounted(() => {
         orbitCtrl.enableRotate = !draging
       }
     )
+  }
+  if (camera && scene && canvas) {
+    const dragControls = new DragControls(scene.children, camera, canvas)
+
+    // 监听拖拽事件并更新场景
+    dragControls.addEventListener('dragstart', function (event) {
+      console.log('dragstart')
+      state.draging = true
+    })
+
+    dragControls.addEventListener('dragend', function (event) {
+      state.draging = false
+    })
   }
 })
 
