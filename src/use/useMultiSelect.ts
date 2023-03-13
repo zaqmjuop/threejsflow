@@ -22,7 +22,7 @@ export const useMultiSelect = ({
     x2: 0,
     y1: 0,
     y2: 0,
-    selecting: false,
+    selecting: false
   })
   const handlePointerDown = (event: PointerEvent) => {
     if (!event.shiftKey) {
@@ -41,58 +41,32 @@ export const useMultiSelect = ({
     state.x2 = (event.clientX / window.innerWidth) * 2 - 1
     state.y2 = -(event.clientY / window.innerHeight) * 2 + 1
 
-    const frustumSize = 1000
-    const aspect = window.innerWidth / window.innerHeight
-    const near = 1
-    const far = 2000
-    const projectionMatrix = new Matrix4()
-    projectionMatrix.makeOrthographic(
-      -frustumSize / 2,
-      frustumSize / 2,
-      frustumSize / (2 * aspect),
-      -frustumSize / (2 * aspect),
-      near,
-      far
-    )
-    const world1 = new Vector3(state.x1, state.y1, 0.5)
-      .applyMatrix4(projectionMatrix)
-      .applyMatrix4(camera.matrixWorld)
-    const world2 = new Vector3(state.x2, state.y2, 0.5)
-      .applyMatrix4(projectionMatrix)
-      .applyMatrix4(camera.matrixWorld)
-    // const world3 = new Vector3(state.x2, state.y1, 0.5)
-    //   .applyMatrix4(projectionMatrix)
-    //   .applyMatrix4(camera.matrixWorld)
-    // const world4 = new Vector3(state.x1, state.y2, 0.5)
-    //   .applyMatrix4(projectionMatrix)
-    //   .applyMatrix4(camera.matrixWorld)
+    // 计算矩形的边界
+    const mouseBox = new Box3()
+    const point1 = new Vector3(state.x1, state.y1, 0)
+    let point2 = new Vector3(state.x2, state.y2, 0)
+    point1.unproject(camera)
+    point2.unproject(camera)
+    // mouseBox.setFromPoints([point1, point2])
 
-    const geometry = new BoxGeometry(
-      Math.abs(world1.x - world2.x),
-      Math.abs(world1.y - world2.y),
-      1
-    )
-    const material = new MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.2
-    })
-    const mesh = new Mesh(geometry, material)
-    mesh.position.copy(camera.position)
-    mesh.lookAt(camera.getWorldDirection(new Vector3()).add(camera.position))
-    scene.add(mesh)
+    const cameraDirection = new Vector3() // 定义一个方向向量
+    camera.getWorldDirection(cameraDirection) // 获取摄像机方向，赋值给方向向量
+    const distance = 2000 // 移动距离
+    point2 = point2.add(cameraDirection.multiplyScalar(distance))
+
+    mouseBox.set(point1, point2)
 
     const intersects: any[] = []
-    scene.traverse((obj) => {
-      if ((obj as any).isMesh) {
-        const box = new Box3().setFromObject(obj)
-        const boundingBox = mesh.geometry.boundingBox
-        if (boundingBox && box.intersectsBox(boundingBox)) {
-          intersects.push(obj)
+    console.log(mouseBox)
+    scene.traverse((child) => {
+      if ((child as any).isMesh) {
+        const childBox = new Box3().setFromObject(child)
+        console.log({ childBox }, childBox.intersectsBox(mouseBox))
+        if (childBox.intersectsBox(mouseBox)) {
+          intersects.push(child)
         }
       }
     })
-    scene.remove(mesh)
     console.log(intersects)
     state.selecting = false
   }
