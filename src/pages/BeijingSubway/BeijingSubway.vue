@@ -13,7 +13,7 @@
   >
     <Camera ref="cameraRef" :position="{ x: 0, y: 30, z: 130 }" />
     <Scene ref="sceneRef">
-      <BloomCube ></BloomCube>
+      <BloomCube></BloomCube>
       <PointLight :position="{ z: 300 }" />
       <BeijingRegion />
       <StationList :stationList="BEIJING_STATION_DATA"></StationList>
@@ -42,13 +42,15 @@ import { useCameraStore } from '@/store/cameraStore'
 import { DragControls } from '@/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import BloomCube from '@/components/BloomCube.vue'
+import { useMultiSelect } from '@/use/useMultiSelect'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
 const rendererC = shallowRef<typeof Renderer | null>(null)
 const state = shallowReactive({
   draging: false,
-  enableOrbit: true
+  enableOrbit: true,
+  selecting: false
 })
 
 const orbitCtrl = computed<OrbitControls | undefined>(
@@ -63,12 +65,13 @@ watch(
 )
 
 watch(
-  () => state.draging,
-  () => {
-    if (orbitCtrl.value) {
-      orbitCtrl.value.enablePan = !state.draging
-      orbitCtrl.value.enableRotate = !state.draging
+  () => state.draging || state.selecting,
+  (disabled: boolean) => {
+    if (!orbitCtrl.value) {
+      return
     }
+    orbitCtrl.value.enablePan = !disabled
+    orbitCtrl.value.enableRotate = !disabled
   },
   { immediate: true }
 )
@@ -93,6 +96,15 @@ onMounted(() => {
   const scene = sceneRef.value?.scene as THREE.Scene | null
   const canvas = rendererC.value?.canvas
   console.log(scene)
+  if (camera && scene) {
+    const multiStore = useMultiSelect({ camera, scene })
+    watch(
+      () => multiStore.state.selecting,
+      () => {
+        state.selecting = multiStore.state.selecting
+      }
+    )
+  }
 
   if (camera && scene && canvas instanceof HTMLCanvasElement) {
     hoverTargetRef = useHoverTarget({

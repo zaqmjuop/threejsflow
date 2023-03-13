@@ -21,12 +21,14 @@ export const useMultiSelect = ({
     x1: 0,
     x2: 0,
     y1: 0,
-    y2: 0
+    y2: 0,
+    selecting: false,
   })
   const handlePointerDown = (event: PointerEvent) => {
     if (!event.shiftKey) {
       return
     }
+    state.selecting = true
     state.x1 = (event.clientX / window.innerWidth) * 2 - 1
     state.y1 = -(event.clientY / window.innerHeight) * 2 + 1
     window.addEventListener('pointermove', handlePointerMove)
@@ -92,6 +94,10 @@ export const useMultiSelect = ({
     })
     scene.remove(mesh)
     console.log(intersects)
+    state.selecting = false
   }
   window.addEventListener('pointerdown', handlePointerDown)
+  return {
+    state
+  }
 }
