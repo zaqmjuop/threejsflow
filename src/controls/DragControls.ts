@@ -137,6 +137,9 @@ class DragControls extends EventDispatcher {
       if (event.buttons !== 1) {
         return
       }
+      if (event.shiftKey) {
+        return
+      }
 
       if (scope.enabled === false) return
 
