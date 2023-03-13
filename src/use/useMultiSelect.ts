@@ -47,21 +47,18 @@ export const useMultiSelect = ({
     let point2 = new Vector3(state.x2, state.y2, 0)
     point1.unproject(camera)
     point2.unproject(camera)
-    // mouseBox.setFromPoints([point1, point2])
 
     const cameraDirection = new Vector3() // 定义一个方向向量
     camera.getWorldDirection(cameraDirection) // 获取摄像机方向，赋值给方向向量
     const distance = 2000 // 移动距离
     point2 = point2.add(cameraDirection.multiplyScalar(distance))
 
-    mouseBox.set(point1, point2)
+    mouseBox.setFromPoints([point1, point2])
 
     const intersects: any[] = []
-    console.log(mouseBox)
     scene.traverse((child) => {
       if ((child as any).isMesh) {
         const childBox = new Box3().setFromObject(child)
-        console.log({ childBox }, childBox.intersectsBox(mouseBox))
         if (childBox.intersectsBox(mouseBox)) {
           intersects.push(child)
         }
