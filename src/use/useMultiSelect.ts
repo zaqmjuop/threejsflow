@@ -3,12 +3,34 @@ import {
   Scene,
   Camera,
   Matrix4,
+  Vector2,
   Vector3,
+  Box2,
   Box3,
   Mesh,
   MeshBasicMaterial,
-  BoxGeometry
+  BoxGeometry,
+  Frustum,
+  Color,
+  Box3Helper
 } from 'three'
+
+// 获取物体在屏幕上的位置
+function getScreenPosition(
+  obj: Mesh,
+  camera: Camera,
+  width: number,
+  height: number
+) {
+  const vector = new Vector3()
+
+  vector.setFromMatrixPosition(obj.matrixWorld)
+  vector.project(camera)
+
+  vector.x = (vector.x * 0.5 + 0.5) * width
+  vector.y = (vector.y * 0.5 + 0.5) * height
+  return new Vector2(vector.x, vector.y)
+}
 
 export const useMultiSelect = ({
   camera,
@@ -29,8 +51,8 @@ export const useMultiSelect = ({
       return
     }
     state.selecting = true
-    state.x1 = (event.clientX / window.innerWidth) * 2 - 1
-    state.y1 = -(event.clientY / window.innerHeight) * 2 + 1
+    state.x1 = event.clientX
+    state.y1 = event.clientY
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
   }
@@ -38,33 +60,54 @@ export const useMultiSelect = ({
   const handlePointerUp = (event: PointerEvent) => {
     window.removeEventListener('pointermove', handlePointerMove)
     window.removeEventListener('pointerup', handlePointerUp)
-    state.x2 = (event.clientX / window.innerWidth) * 2 - 1
-    state.y2 = -(event.clientY / window.innerHeight) * 2 + 1
+    state.x2 = event.clientX
+    state.y2 = event.clientY
 
-    // 计算矩形的边界
-    const mouseBox = new Box3()
-    const point1 = new Vector3(state.x1, state.y1, 0)
-    let point2 = new Vector3(state.x2, state.y2, 0)
-    point1.unproject(camera)
-    point2.unproject(camera)
+    if (state.x2 < state.x1) {
+      const tmp = state.x2
+      state.x2 = state.x1
+      state.x1 = tmp
+    }
+    if (state.y2 < state.y1) {
+      const tmp = state.y2
+      state.y2 = state.y1
+      state.y1 = tmp
+    }
 
-    const cameraDirection = new Vector3() // 定义一个方向向量
-    camera.getWorldDirection(cameraDirection) // 获取摄像机方向，赋值给方向向量
-    const distance = 2000 // 移动距离
-    point2 = point2.add(cameraDirection.multiplyScalar(distance))
+    const frustum = new Frustum()
+    frustum.setFromProjectionMatrix(
+      new Matrix4().multiplyMatrices(
+        camera.projectionMatrix,
+        camera.matrixWorldInverse
+      )
+    )
 
-    mouseBox.setFromPoints([point1, point2])
+    const box = new Box3()
 
-    const intersects: any[] = []
-    scene.traverse((child) => {
-      if ((child as any).isMesh) {
-        const childBox = new Box3().setFromObject(child)
-        if (childBox.intersectsBox(mouseBox)) {
-          intersects.push(child)
+    scene.traverse((obj: any) => {
+      if (obj.isMesh) {
+        box.setFromObject(obj)
+        const isIntersect = frustum.intersectsBox(box)
+        if (isIntersect) {
+          const point = getScreenPosition(
+            obj,
+            camera,
+            window.innerWidth,
+            window.innerHeight
+          )
+
+          const include =
+            state.x1 <= point.x &&
+            point.x <= state.x2 &&
+            state.y1 <= point.y &&
+            point.y <= state.y2
+          if (include) {
+            obj.material.color.setHex(0xff0000)
+          }
         }
       }
     })
-    console.log(intersects)
+
     state.selecting = false
   }
   window.addEventListener('pointerdown', handlePointerDown)

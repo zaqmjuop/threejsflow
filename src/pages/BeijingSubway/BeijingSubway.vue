@@ -95,7 +95,6 @@ onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
   const canvas = rendererC.value?.canvas
-  console.log(scene)
   if (camera && scene) {
     const multiStore = useMultiSelect({ camera, scene })
     watch(
