@@ -104,7 +104,7 @@ onMounted(() => {
     const helper = new SelectionHelper(renderer, 'selectBox')
     document.addEventListener('pointerdown', (event: PointerEvent) => {
       for (const item of selectionBox.collection) {
-        item.material.emissive.set(0x000000)
+        item.material.color.setHex(0x000000)
       }
 
       selectionBox.startPoint.set(
@@ -117,7 +117,7 @@ onMounted(() => {
     document.addEventListener('pointermove', (event: PointerEvent) => {
       if (helper.isDown) {
         for (let i = 0; i < selectionBox.collection.length; i++) {
-          selectionBox.collection[i].material.emissive.set(0x000000)
+          selectionBox.collection[i].material.color.setHex(0x000000)
         }
 
         selectionBox.endPoint.set(
@@ -129,7 +129,7 @@ onMounted(() => {
         const allSelected = selectionBox.select()
 
         for (let i = 0; i < allSelected.length; i++) {
-          allSelected[i].material.emissive.set(0xffffff)
+          allSelected[i].material.color.setHex(0xffffff)
         }
       }
     })
@@ -144,11 +144,9 @@ onMounted(() => {
       const allSelected = selectionBox.select()
 
       for (let i = 0; i < allSelected.length; i++) {
-        allSelected[i].material.emissive.set(0xffffff)
+        allSelected[i].material.color.setHex(0xffffff)
       }
     })
-
-    console.log(helper)
   }
   // if (camera && scene) {
   //   const multiStore = useMultiSelect({ camera, scene })
@@ -160,40 +158,40 @@ onMounted(() => {
   //   )
   // }
 
-  if (camera && scene && canvas instanceof HTMLCanvasElement) {
-    hoverTargetRef = useHoverTarget({
-      camera,
-      scene
-    })
+  // if (camera && scene && canvas instanceof HTMLCanvasElement) {
+  //   hoverTargetRef = useHoverTarget({
+  //     camera,
+  //     scene
+  //   })
 
-    let prevObjectColor = -1
+  //   let prevObjectColor = -1
 
-    const selector = useSelect({ camera, scene, domElement: canvas })
+  //   const selector = useSelect({ camera, scene, domElement: canvas })
 
-    watch(
-      () => hoverTargetRef?.value?.object,
-      (object?, prev?) => {
-        if (prev && prevObjectColor >= 0) {
-          ;(prev as Object3D).material.color.setHex(prevObjectColor)
-          prevObjectColor = -1
-        }
-        if (object) {
-          prevObjectColor = (object as Object3D).material.color.getHex()
-          ;(object as Object3D).material.color.setHex(0xffe599)
-        }
-      }
-    )
+  //   watch(
+  //     () => hoverTargetRef?.value?.object,
+  //     (object?, prev?) => {
+  //       if (prev && prevObjectColor >= 0) {
+  //         ;(prev as Object3D).material.color.setHex(prevObjectColor)
+  //         prevObjectColor = -1
+  //       }
+  //       if (object) {
+  //         prevObjectColor = (object as Object3D).material.color.getHex()
+  //         ;(object as Object3D).material.color.setHex(0xffe599)
+  //       }
+  //     }
+  //   )
 
-    watch(selector, (value) => {
-      selecteds.forEach((item) => {
-        item?.object.scale.set(1, 1, 1)
-      })
-      selecteds.splice(0, selecteds.length, ...selector)
-      selecteds.forEach((item) => {
-        item?.object.scale.set(1.1, 1.1, 1.1)
-      })
-    })
-  }
+  //   watch(selector, (value) => {
+  //     selecteds.forEach((item) => {
+  //       item?.object.scale.set(1, 1, 1)
+  //     })
+  //     selecteds.splice(0, selecteds.length, ...selector)
+  //     selecteds.forEach((item) => {
+  //       item?.object.scale.set(1.1, 1.1, 1.1)
+  //     })
+  //   })
+  // }
 
   if (orbitCtrl.value) {
     watch(
@@ -222,7 +220,7 @@ onMounted(() => {
 // 摄像机位置 camera.getWorldPosition(v)
 // 摄像机方向 camera.getWorldDirection(new THREE.Vector3(0,0,0))
 </script>
-<style scoped>
+<style>
 .absolute-div {
   position: fixed;
   left: 0;
