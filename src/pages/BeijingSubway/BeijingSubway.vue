@@ -183,4 +183,9 @@ onMounted(() => {
   color: #fff;
   text-shadow: 1px 1px #ff0000, -1px -1px #0000ff;
 }
+.selectBox {
+  border: 1px solid #55aaff;
+  background-color: rgba(75, 160, 255, 0.3);
+  position: fixed;
+}
 </style>
