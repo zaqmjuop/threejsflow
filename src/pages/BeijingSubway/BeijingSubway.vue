@@ -95,15 +95,15 @@ onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
   const canvas = rendererC.value?.canvas
-  if (camera && scene) {
-    const multiStore = useMultiSelect({ camera, scene })
-    watch(
-      () => multiStore.state.selecting,
-      () => {
-        state.selecting = multiStore.state.selecting
-      }
-    )
-  }
+  // if (camera && scene) {
+  //   const multiStore = useMultiSelect({ camera, scene })
+  //   watch(
+  //     () => multiStore.state.selecting,
+  //     () => {
+  //       state.selecting = multiStore.state.selecting
+  //     }
+  //   )
+  // }
 
   if (camera && scene && canvas instanceof HTMLCanvasElement) {
     hoverTargetRef = useHoverTarget({
