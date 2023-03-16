@@ -47,7 +47,7 @@ class SelectionBox {
     this.deep = deep
   }
 
-  select(startPoint: Vector3, endPoint: Vector3) {
+  select(startPoint?: Vector3, endPoint?: Vector3) {
     this.startPoint = startPoint || this.startPoint
     this.endPoint = endPoint || this.endPoint
     this.collection = []

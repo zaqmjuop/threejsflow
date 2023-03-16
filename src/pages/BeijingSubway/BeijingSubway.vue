@@ -100,7 +100,54 @@ onMounted(() => {
   const canvas = rendererC.value?.canvas
   const renderer: THREE.Renderer | undefined = rendererC.value?.renderer
   if (camera && scene && renderer) {
-    const helper = new SelectionHelper(renderer, 'a')
+    const selectionBox = new SelectionBox(camera, scene)
+    const helper = new SelectionHelper(renderer, 'selectBox')
+    document.addEventListener('pointerdown', (event: PointerEvent) => {
+      for (const item of selectionBox.collection) {
+        item.material.emissive.set(0x000000)
+      }
+
+      selectionBox.startPoint.set(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
+      )
+    })
+
+    document.addEventListener('pointermove', (event: PointerEvent) => {
+      if (helper.isDown) {
+        for (let i = 0; i < selectionBox.collection.length; i++) {
+          selectionBox.collection[i].material.emissive.set(0x000000)
+        }
+
+        selectionBox.endPoint.set(
+          (event.clientX / window.innerWidth) * 2 - 1,
+          -(event.clientY / window.innerHeight) * 2 + 1,
+          0.5
+        )
+
+        const allSelected = selectionBox.select()
+
+        for (let i = 0; i < allSelected.length; i++) {
+          allSelected[i].material.emissive.set(0xffffff)
+        }
+      }
+    })
+
+    document.addEventListener('pointerup', (event: PointerEvent) => {
+      selectionBox.endPoint.set(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
+      )
+
+      const allSelected = selectionBox.select()
+
+      for (let i = 0; i < allSelected.length; i++) {
+        allSelected[i].material.emissive.set(0xffffff)
+      }
+    })
+
     console.log(helper)
   }
   // if (camera && scene) {
