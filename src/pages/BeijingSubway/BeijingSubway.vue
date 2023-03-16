@@ -5,7 +5,8 @@
     antialias
     resize="window"
     :orbit-ctrl="{
-      enableRotate: true
+      enableRotate: false,
+      enablePan: false
     }"
     :pointer="{
       touch: true
@@ -43,6 +44,8 @@ import { DragControls } from '@/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import BloomCube from '@/components/BloomCube.vue'
 import { useMultiSelect } from '@/use/useMultiSelect'
+import { SelectionHelper } from '@/try/SelectionHelper'
+import { SelectionBox } from '@/try/SelectionBox'
 
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
@@ -70,8 +73,8 @@ watch(
     if (!orbitCtrl.value) {
       return
     }
-    orbitCtrl.value.enablePan = !disabled
-    orbitCtrl.value.enableRotate = !disabled
+    orbitCtrl.value.enablePan = false //!disabled
+    orbitCtrl.value.enableRotate = false //!disabled
   },
   { immediate: true }
 )
@@ -95,6 +98,11 @@ onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
   const scene = sceneRef.value?.scene as THREE.Scene | null
   const canvas = rendererC.value?.canvas
+  const renderer: THREE.Renderer | undefined = rendererC.value?.renderer
+  if (camera && scene && renderer) {
+    const helper = new SelectionHelper(renderer, 'a')
+    console.log(helper)
+  }
   // if (camera && scene) {
   //   const multiStore = useMultiSelect({ camera, scene })
   //   watch(
@@ -148,19 +156,19 @@ onMounted(() => {
       }
     )
   }
-  if (camera && scene && canvas) {
-    const dragControls = new DragControls(scene.children, camera, canvas)
-    dragControls.enabled = true
+  // if (camera && scene && canvas) {
+  //   const dragControls = new DragControls(scene.children, camera, canvas)
+  //   dragControls.enabled = true
 
-    // 监听拖拽事件并更新场景
-    dragControls.addEventListener('dragstart', () => {
-      state.draging = true
-    })
+  //   // 监听拖拽事件并更新场景
+  //   dragControls.addEventListener('dragstart', () => {
+  //     state.draging = true
+  //   })
 
-    dragControls.addEventListener('dragend', () => {
-      state.draging = false
-    })
-  }
+  //   dragControls.addEventListener('dragend', () => {
+  //     state.draging = false
+  //   })
+  // }
 })
 
 // 鼠标位置
