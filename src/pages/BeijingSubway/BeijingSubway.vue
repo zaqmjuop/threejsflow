@@ -100,15 +100,6 @@ onMounted(() => {
   if (camera && scene && renderer) {
     useMultiSelect({ camera, scene, renderer })
   }
-  // if (camera && scene) {
-  //   const multiStore = useMultiSelect({ camera, scene })
-  //   watch(
-  //     () => multiStore.state.selecting,
-  //     () => {
-  //       state.selecting = multiStore.state.selecting
-  //     }
-  //   )
-  // }
 
   // if (camera && scene && canvas instanceof HTMLCanvasElement) {
   //   hoverTargetRef = useHoverTarget({
