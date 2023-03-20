@@ -1,117 +1,76 @@
+import { PerspectiveCamera, Scene, Renderer } from 'three'
+import { SelectionHelper } from '@/try/SelectionHelper'
+import { SelectionBox } from '@/try/SelectionBox'
 import { shallowReactive } from 'vue'
-import {
-  Scene,
-  Camera,
-  Matrix4,
-  Vector2,
-  Vector3,
-  Box2,
-  Box3,
-  Mesh,
-  MeshBasicMaterial,
-  BoxGeometry,
-  Frustum,
-  Color,
-  Box3Helper
-} from 'three'
 
-// 获取物体在屏幕上的位置
-function getScreenPosition(
-  obj: Mesh,
-  camera: Camera,
-  width: number,
-  height: number
-) {
-  const vector = new Vector3()
-
-  vector.setFromMatrixPosition(obj.matrixWorld)
-  vector.project(camera)
-
-  vector.x = (vector.x * 0.5 + 0.5) * width
-  vector.y = (vector.y * 0.5 + 0.5) * height
-  return new Vector2(vector.x, vector.y)
-}
-
-export const useMultiSelect = ({
-  camera,
-  scene
-}: {
-  camera: Camera
+export const useMultiSelect = (payload: {
+  camera: PerspectiveCamera
   scene: Scene
+  renderer: Renderer
 }) => {
-  const state = shallowReactive({
-    x1: 0,
-    x2: 0,
-    y1: 0,
-    y2: 0,
-    selecting: false
-  })
-  const handlePointerDown = (event: PointerEvent) => {
-    if (!event.shiftKey) {
-      return
+  const selectionBox = new SelectionBox(payload.camera, payload.scene)
+  const helper = new SelectionHelper(payload.renderer, 'selectBox')
+
+  const originColors = shallowReactive<Record<string, number>>({})
+
+  const backColor = (target: any) => {
+    const uuid = target.uuid
+    const originColor = originColors[uuid]
+    if (originColor !== undefined) {
+      target.material.color.setHex(originColor)
     }
-    state.selecting = true
-    state.x1 = event.clientX
-    state.y1 = event.clientY
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp)
+    delete originColors[uuid]
   }
-  const handlePointerMove = (event: PointerEvent) => {}
-  const handlePointerUp = (event: PointerEvent) => {
-    window.removeEventListener('pointermove', handlePointerMove)
-    window.removeEventListener('pointerup', handlePointerUp)
-    state.x2 = event.clientX
-    state.y2 = event.clientY
 
-    if (state.x2 < state.x1) {
-      const tmp = state.x2
-      state.x2 = state.x1
-      state.x1 = tmp
-    }
-    if (state.y2 < state.y1) {
-      const tmp = state.y2
-      state.y2 = state.y1
-      state.y1 = tmp
+  document.addEventListener('pointerdown', (event: PointerEvent) => {
+    for (const item of selectionBox.collection) {
+      backColor(item)
     }
 
-    const frustum = new Frustum()
-    frustum.setFromProjectionMatrix(
-      new Matrix4().multiplyMatrices(
-        camera.projectionMatrix,
-        camera.matrixWorldInverse
+    selectionBox.startPoint.set(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1,
+      0.5
+    )
+  })
+
+  document.addEventListener('pointermove', (event: PointerEvent) => {
+    if (helper.isDown) {
+      const collection = selectionBox.collection
+      for (let i = 0; i < collection.length; i++) {
+        backColor(collection[i])
+      }
+
+      selectionBox.endPoint.set(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        0.5
       )
+
+      const allSelected = selectionBox.select()
+
+      for (let i = 0; i < allSelected.length; i++) {
+        const uuid = allSelected[i].uuid
+        if (originColors[uuid] === undefined) {
+          const color = allSelected[i].material.color.getHex()
+          originColors[uuid] = color
+        }
+        allSelected[i].material.color.setHex(0xffffff)
+      }
+    }
+  })
+
+  document.addEventListener('pointerup', (event: PointerEvent) => {
+    selectionBox.endPoint.set(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1,
+      0.5
     )
 
-    const box = new Box3()
+    const allSelected = selectionBox.select()
 
-    scene.traverse((obj: any) => {
-      if (obj.isMesh) {
-        box.setFromObject(obj)
-        const isIntersect = frustum.intersectsBox(box)
-        if (isIntersect) {
-          const point = getScreenPosition(
-            obj,
-            camera,
-            window.innerWidth,
-            window.innerHeight
-          )
-
-          const include =
-            state.x1 <= point.x &&
-            point.x <= state.x2 &&
-            state.y1 <= point.y &&
-            point.y <= state.y2
-          if (include) {
-            obj.material.color.setHex(0xff0000)
-          }
-        }
-      }
-    })
-
-    state.selecting = false
-  }
-  window.addEventListener('pointerdown', handlePointerDown)
-  return {
-    state
-  }
+    for (let i = 0; i < allSelected.length; i++) {
+      backColor(allSelected[i])
+    }
+  })
 }
