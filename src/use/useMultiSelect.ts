@@ -13,6 +13,10 @@ export const useMultiSelect = (payload: {
 
   const originColors = shallowReactive<Record<string, number>>({})
 
+  const state = shallowReactive({
+    selecting: false
+  })
+
   const backColor = (target: any) => {
     const uuid = target.uuid
     const originColor = originColors[uuid]
@@ -22,45 +26,58 @@ export const useMultiSelect = (payload: {
     delete originColors[uuid]
   }
 
-  document.addEventListener('pointerdown', (event: PointerEvent) => {
+  const handleDown = (event: PointerEvent) => {
     for (const item of selectionBox.collection) {
       backColor(item)
     }
+    if (event.shiftKey) {
+      state.selecting = true
 
-    selectionBox.startPoint.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1,
-      0.5
-    )
-  })
+      helper.onPointerDown(event)
 
-  document.addEventListener('pointermove', (event: PointerEvent) => {
-    if (helper.isDown) {
-      const collection = selectionBox.collection
-      for (let i = 0; i < collection.length; i++) {
-        backColor(collection[i])
-      }
-
-      selectionBox.endPoint.set(
+      selectionBox.startPoint.set(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1,
         0.5
       )
-
-      const allSelected = selectionBox.select()
-
-      for (let i = 0; i < allSelected.length; i++) {
-        const uuid = allSelected[i].uuid
-        if (originColors[uuid] === undefined) {
-          const color = allSelected[i].material.color.getHex()
-          originColors[uuid] = color
-        }
-        allSelected[i].material.color.setHex(0xffffff)
-      }
     }
-  })
+  }
 
-  document.addEventListener('pointerup', (event: PointerEvent) => {
+  const handleMove = (event: PointerEvent) => {
+    if (!state.selecting) {
+      return
+    }
+    if (!event.shiftKey) {
+      return handleUp(event)
+    }
+
+    helper.onPointerMove(event)
+
+    const collection = selectionBox.collection
+    for (let i = 0; i < collection.length; i++) {
+      backColor(collection[i])
+    }
+
+    selectionBox.endPoint.set(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1,
+      0.5
+    )
+
+    const allSelected = selectionBox.select()
+
+    for (let i = 0; i < allSelected.length; i++) {
+      const uuid = allSelected[i].uuid
+      if (originColors[uuid] === undefined) {
+        const color = allSelected[i].material.color.getHex()
+        originColors[uuid] = color
+      }
+      allSelected[i].material.color.setHex(0xffffff)
+    }
+  }
+
+  const handleUp = (event: PointerEvent) => {
+    helper.onPointerUp()
     selectionBox.endPoint.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1,
@@ -72,5 +89,10 @@ export const useMultiSelect = (payload: {
     for (let i = 0; i < allSelected.length; i++) {
       backColor(allSelected[i])
     }
-  })
+    state.selecting = false
+  }
+
+  payload.renderer.domElement.addEventListener('pointerdown', handleDown)
+  payload.renderer.domElement.addEventListener('pointermove', handleMove)
+  payload.renderer.domElement.addEventListener('pointerup', handleUp)
 }

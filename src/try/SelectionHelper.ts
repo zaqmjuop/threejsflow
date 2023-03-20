@@ -9,7 +9,7 @@ class SelectionHelper {
   isDown: boolean
   onPointerDown: (event: PointerEvent) => void
   onPointerMove: (event: PointerEvent) => void
-  onPointerUp: (event: PointerEvent) => void
+  onPointerUp: (event?: PointerEvent) => void
   constructor(renderer: Renderer, cssClassName: string) {
     this.element = document.createElement('div')
     this.element.classList.add(cssClassName)
@@ -38,10 +38,6 @@ class SelectionHelper {
       this.isDown = false
       this.onSelectOver()
     }
-
-    this.renderer.domElement.addEventListener('pointerdown', this.onPointerDown)
-    this.renderer.domElement.addEventListener('pointermove', this.onPointerMove)
-    this.renderer.domElement.addEventListener('pointerup', this.onPointerUp)
   }
 
   dispose() {
