@@ -8,6 +8,8 @@ export const useMultiSelect = (payload: {
   scene: Scene
   renderer: Renderer
 }) => {
+  const domElement = payload.renderer.domElement
+
   const selectionBox = new SelectionBox(payload.camera, payload.scene)
   const helper = new SelectionHelper(payload.renderer, 'selectBox')
 
@@ -36,8 +38,8 @@ export const useMultiSelect = (payload: {
       helper.onPointerDown(event)
 
       selectionBox.startPoint.set(
-        (event.clientX / window.innerWidth) * 2 - 1,
-        -(event.clientY / window.innerHeight) * 2 + 1,
+        (event.clientX / domElement.width) * 2 - 1,
+        -(event.clientY / domElement.height) * 2 + 1,
         0.5
       )
     }
@@ -59,8 +61,8 @@ export const useMultiSelect = (payload: {
     }
 
     selectionBox.endPoint.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1,
+      (event.clientX / domElement.width) * 2 - 1,
+      -(event.clientY / domElement.height) * 2 + 1,
       0.5
     )
 
@@ -79,8 +81,8 @@ export const useMultiSelect = (payload: {
   const handleUp = (event: PointerEvent) => {
     helper.onPointerUp()
     selectionBox.endPoint.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1,
+      (event.clientX / domElement.width) * 2 - 1,
+      -(event.clientY / domElement.height) * 2 + 1,
       0.5
     )
 
@@ -92,7 +94,7 @@ export const useMultiSelect = (payload: {
     state.selecting = false
   }
 
-  payload.renderer.domElement.addEventListener('pointerdown', handleDown)
-  payload.renderer.domElement.addEventListener('pointermove', handleMove)
-  payload.renderer.domElement.addEventListener('pointerup', handleUp)
+  domElement.addEventListener('pointerdown', handleDown)
+  domElement.addEventListener('pointermove', handleMove)
+  domElement.addEventListener('pointerup', handleUp)
 }
