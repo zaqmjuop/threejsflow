@@ -101,40 +101,40 @@ onMounted(() => {
     useMultiSelect({ camera, scene, renderer })
   }
 
-  // if (camera && scene && canvas instanceof HTMLCanvasElement) {
-  //   hoverTargetRef = useHoverTarget({
-  //     camera,
-  //     scene
-  //   })
+  if (camera && scene && canvas instanceof HTMLCanvasElement) {
+    hoverTargetRef = useHoverTarget({
+      camera,
+      scene
+    })
 
-  //   let prevObjectColor = -1
+    let prevObjectColor = -1
 
-  //   const selector = useSelect({ camera, scene, domElement: canvas })
+    const selector = useSelect({ camera, scene, domElement: canvas })
 
-  //   watch(
-  //     () => hoverTargetRef?.value?.object,
-  //     (object?, prev?) => {
-  //       if (prev && prevObjectColor >= 0) {
-  //         ;(prev as Object3D).material.color.setHex(prevObjectColor)
-  //         prevObjectColor = -1
-  //       }
-  //       if (object) {
-  //         prevObjectColor = (object as Object3D).material.color.getHex()
-  //         ;(object as Object3D).material.color.setHex(0xffe599)
-  //       }
-  //     }
-  //   )
+    watch(
+      () => hoverTargetRef?.value?.object,
+      (object?, prev?) => {
+        if (prev && prevObjectColor >= 0) {
+          ;(prev as Object3D).material.color.setHex(prevObjectColor)
+          prevObjectColor = -1
+        }
+        if (object) {
+          prevObjectColor = (object as Object3D).material.color.getHex()
+          ;(object as Object3D).material.color.setHex(0xffe599)
+        }
+      }
+    )
 
-  //   watch(selector, (value) => {
-  //     selecteds.forEach((item) => {
-  //       item?.object.scale.set(1, 1, 1)
-  //     })
-  //     selecteds.splice(0, selecteds.length, ...selector)
-  //     selecteds.forEach((item) => {
-  //       item?.object.scale.set(1.1, 1.1, 1.1)
-  //     })
-  //   })
-  // }
+    watch(selector, (value) => {
+      selecteds.forEach((item) => {
+        item?.object.scale.set(1, 1, 1)
+      })
+      selecteds.splice(0, selecteds.length, ...selector)
+      selecteds.forEach((item) => {
+        item?.object.scale.set(1.1, 1.1, 1.1)
+      })
+    })
+  }
 
   if (orbitCtrl.value) {
     watch(
@@ -144,23 +144,24 @@ onMounted(() => {
       }
     )
   }
-  // if (camera && scene && canvas) {
-  //   const dragControls = new DragControls(scene.children, camera, canvas)
-  //   dragControls.enabled = true
+  if (camera && scene && canvas) {
+    const dragControls = new DragControls(scene.children, camera, canvas)
+    dragControls.enabled = true
 
-  //   // 监听拖拽事件并更新场景
-  //   dragControls.addEventListener('dragstart', () => {
-  //     state.draging = true
-  //   })
+    // 监听拖拽事件并更新场景
+    dragControls.addEventListener('dragstart', () => {
+      state.draging = true
+    })
 
-  //   dragControls.addEventListener('dragend', () => {
-  //     state.draging = false
-  //   })
-  // }
+    dragControls.addEventListener('dragend', () => {
+      state.draging = false
+    })
+  }
 })
 
 // hover
 // drag
+// click-select
 // multi-select
 // camera
 </script>

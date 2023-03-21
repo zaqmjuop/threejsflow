@@ -97,4 +97,5 @@ export const useMultiSelect = (payload: {
   domElement.addEventListener('pointerdown', handleDown)
   domElement.addEventListener('pointermove', handleMove)
   domElement.addEventListener('pointerup', handleUp)
+  return { state }
 }
