@@ -5,8 +5,8 @@
     antialias
     resize="window"
     :orbit-ctrl="{
-      enableRotate: false,
-      enablePan: false
+      enableRotate: true,
+      enablePan: true
     }"
     :pointer="{
       touch: true
@@ -37,7 +37,6 @@ import {
   computed
 } from 'vue'
 import { useHoverTarget } from '@/use/useHoverTarget'
-import { useSelect } from '@/use/useSelect'
 import DragControll from '@/components/DragControll.vue'
 import { useCameraStore } from '@/store/cameraStore'
 import { DragControls } from '@/controls/DragControls'
@@ -71,8 +70,8 @@ watch(
     if (!orbitCtrl.value) {
       return
     }
-    orbitCtrl.value.enablePan = false //!disabled
-    orbitCtrl.value.enableRotate = false //!disabled
+    orbitCtrl.value.enablePan = !disabled
+    orbitCtrl.value.enableRotate = !disabled
   },
   { immediate: true }
 )
@@ -109,7 +108,7 @@ onMounted(() => {
 
     let prevObjectColor = -1
 
-    const selector = useSelect({ camera, scene, domElement: canvas })
+    // const selector = useSelect({ camera, scene, domElement: canvas })
 
     watch(
       () => hoverTargetRef?.value?.object,
@@ -122,25 +121,6 @@ onMounted(() => {
           prevObjectColor = (object as Object3D).material.color.getHex()
           ;(object as Object3D).material.color.setHex(0xffe599)
         }
-      }
-    )
-
-    watch(selector, (value) => {
-      selecteds.forEach((item) => {
-        item?.object.scale.set(1, 1, 1)
-      })
-      selecteds.splice(0, selecteds.length, ...selector)
-      selecteds.forEach((item) => {
-        item?.object.scale.set(1.1, 1.1, 1.1)
-      })
-    })
-  }
-
-  if (orbitCtrl.value) {
-    watch(
-      () => cameraStore.draging,
-      (draging: boolean) => {
-        orbitCtrl.value && (orbitCtrl.value.enableRotate = !draging)
       }
     )
   }
@@ -158,12 +138,6 @@ onMounted(() => {
     })
   }
 })
-
-// hover
-// drag
-// click-select
-// multi-select
-// camera
 </script>
 <style>
 .absolute-div {
