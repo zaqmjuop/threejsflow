@@ -17,7 +17,10 @@
       <BloomCube></BloomCube>
       <PointLight :position="{ z: 300 }" />
       <BeijingRegion />
-      <StationList :stationList="BEIJING_STATION_DATA"></StationList>
+      <StationList
+        :stationList="BEIJING_STATION_DATA"
+        @dragNode="handleDragNode"
+      ></StationList>
       <DragControll :position="{ x: -50, z: 10, y: 30 }" />
     </Scene>
   </Renderer>
@@ -34,7 +37,8 @@ import {
   shallowRef,
   provide,
   shallowReactive,
-  computed
+  computed,
+  reactive
 } from 'vue'
 import { useHoverTarget } from '@/use/useHoverTarget'
 import DragControll from '@/components/DragControll.vue'
@@ -47,10 +51,12 @@ import { useMultiSelect } from '@/use/useMultiSelect'
 const cameraRef = shallowRef<typeof Camera | null>(null)
 const sceneRef = shallowRef<typeof Scene | null>(null)
 const rendererC = shallowRef<typeof Renderer | null>(null)
-const state = shallowReactive({
+const dragControls = shallowRef<DragControls | null>(null)
+const state = reactive({
   draging: false,
   enableOrbit: true,
-  selecting: false
+  selecting: false,
+  stationList: BEIJING_STATION_DATA
 })
 
 const orbitCtrl = computed<OrbitControls | undefined>(
@@ -79,6 +85,7 @@ watch(
 provide('render', rendererC)
 provide('scene', sceneRef)
 provide('camera', cameraRef)
+provide('dragControls', dragControls)
 
 type Object3D = THREE.Object3D & {
   material: THREE.MeshBasicMaterial
@@ -90,6 +97,16 @@ const selecteds: THREE.Intersection<THREE.Object3D<THREE.Event>>[] =
   shallowReactive([])
 
 provide('selecteds', selecteds)
+
+const handleDragNode = (e: { index: number; mesh: THREE.Mesh }) => {
+  const stationData = state.stationList[e.index]
+  if (stationData) {
+    stationData.position.x = e.mesh.position.x
+    stationData.position.y = e.mesh.position.y
+    stationData.position.z = e.mesh.position.z
+  }
+  console.log(state)
+}
 
 onMounted(() => {
   const camera = cameraRef.value?.camera as THREE.PerspectiveCamera | null
@@ -131,15 +148,16 @@ onMounted(() => {
     )
   }
   if (camera && scene && canvas) {
-    const dragControls = new DragControls(scene.children, camera, canvas)
-    dragControls.enabled = true
+    const controls = new DragControls(scene.children, camera, canvas)
+    dragControls.value = controls
+    controls.enabled = true
 
     // 监听拖拽事件并更新场景
-    dragControls.addEventListener('dragstart', () => {
+    controls.addEventListener('dragstart', () => {
       state.draging = true
     })
 
-    dragControls.addEventListener('dragend', () => {
+    controls.addEventListener('dragend', () => {
       state.draging = false
     })
   }

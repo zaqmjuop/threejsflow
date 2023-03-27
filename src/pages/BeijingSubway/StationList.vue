@@ -2,6 +2,7 @@
   <Group>
     <Group v-for="(item, index) in stationList">
       <Cylinder
+        ref="Cylinders"
         :position="{
           x: item.position.x,
           y: item.position.y,
@@ -60,10 +61,11 @@
 <script setup lang="ts">
 import { BasicMaterial, PhongMaterial, Group, Cylinder, Tube } from 'troisjs'
 import { StationPosition, Station } from '@/type/BeijingSubway'
-import { PropType } from 'vue'
+import { PropType, inject, ShallowRef, watch, ref } from 'vue'
 import Text2 from '@/components/Text'
 import YaHei_Regular from '@/assets/Microsoft-YaHei-Regular.json'
-import { Vector3, CatmullRomCurve3 } from 'three'
+import { Vector3, CatmullRomCurve3, Mesh } from 'three'
+import { DragControls } from '@/controls/DragControls'
 
 const getLineCurve = (
   position1: StationPosition,
@@ -81,4 +83,35 @@ defineProps({
     default: () => []
   }
 })
+
+const emit = defineEmits(['dragNode'])
+
+const Cylinders = ref<null | Array<typeof Cylinder>>(null)
+
+const dragControls: ShallowRef<DragControls | null> | undefined =
+  inject('dragControls')
+
+watch(
+  () => dragControls?.value,
+  (controls) => {
+    if (!controls) {
+      return
+    }
+    controls.addEventListener(
+      'drag',
+      (event: { type: 'drag'; object?: Mesh; target: DragControls }) => {
+        const uuid = event.object?.uuid
+        const CylinderList = Cylinders.value
+        if (uuid && CylinderList?.length) {
+          const index = CylinderList.findIndex((Cylinder) => {
+            return Cylinder.mesh?.uuid === uuid
+          })
+          if (index > -1) {
+            emit('dragNode', { index, mesh: event.object })
+          }
+        }
+      }
+    )
+  }
+)
 </script>
