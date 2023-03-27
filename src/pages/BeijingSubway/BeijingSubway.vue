@@ -97,7 +97,13 @@ onMounted(() => {
   const canvas = rendererC.value?.canvas
   const renderer: THREE.Renderer | undefined = rendererC.value?.renderer
   if (camera && scene && renderer) {
-    useMultiSelect({ camera, scene, renderer })
+    const selectState = useMultiSelect({ camera, scene, renderer })
+    watch(
+      () => selectState.state.selecting,
+      () => {
+        state.selecting = selectState.state.selecting
+      }
+    )
   }
 
   if (camera && scene && canvas instanceof HTMLCanvasElement) {
