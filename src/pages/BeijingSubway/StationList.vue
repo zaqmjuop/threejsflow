@@ -45,16 +45,17 @@
         />
       </Text2>
 
-      <Tube
+      <ReactiveTube
         v-if="index > 0"
-        :path="getLineCurve(stationList[index - 1].position, item.position)"
+        :start="stationList[index - 1].position"
+        :end=" item.position"
         :tubularSegments="10"
         :radius="2"
         :radialSegments="4"
         :closed="false"
       >
         <BasicMaterial color="#30b030" />
-      </Tube>
+      </ReactiveTube>
     </Group>
   </Group>
 </template>
@@ -66,6 +67,7 @@ import Text2 from '@/components/Text'
 import YaHei_Regular from '@/assets/Microsoft-YaHei-Regular.json'
 import { Vector3, CatmullRomCurve3, Mesh } from 'three'
 import { DragControls } from '@/controls/DragControls'
+import ReactiveTube from '@/components/ReactiveTube.vue'
 
 const getLineCurve = (
   position1: StationPosition,

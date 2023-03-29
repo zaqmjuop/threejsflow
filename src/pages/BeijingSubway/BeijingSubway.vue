@@ -105,7 +105,6 @@ const handleDragNode = (e: { index: number; mesh: THREE.Mesh }) => {
     stationData.position.y = e.mesh.position.y
     stationData.position.z = e.mesh.position.z
   }
-  console.log(state)
 }
 
 onMounted(() => {
